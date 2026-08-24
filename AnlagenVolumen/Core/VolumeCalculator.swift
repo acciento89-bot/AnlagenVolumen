@@ -18,6 +18,15 @@ public enum VolumeCalculator {
         return litersPerMeter * (lengthMM / 1000) * quantity
     }
 
+    public static func sectionRadiatorVolumeLiters(
+        litersPerSection: Double,
+        sections: Double,
+        quantity: Double = 1
+    ) -> Double {
+        guard litersPerSection > 0, sections > 0, quantity > 0 else { return 0 }
+        return litersPerSection * sections * quantity
+    }
+
     public static func componentForPipe(
         preset: PipePreset,
         lengthMeters: Double,
@@ -49,6 +58,25 @@ public enum VolumeCalculator {
             unitVolumeLiters: each,
             source: reference.dataset,
             note: "Hersteller-/Baureihenwerte können abweichen. Für exakte Auslegung Hersteller-Wasserinhalt verwenden."
+        )
+    }
+
+    public static func componentForSectionRadiator(
+        reference: SectionRadiatorReference,
+        sections: Double,
+        quantity: Double
+    ) -> VolumeComponent {
+        let each = sectionRadiatorVolumeLiters(
+            litersPerSection: reference.litersPerSection,
+            sections: sections
+        )
+        return VolumeComponent(
+            kind: .radiator,
+            name: "\(reference.material.rawValue)-Gliederheizkörper · \(reference.displayName) · \(format(sections)) Glieder",
+            quantity: quantity,
+            unitVolumeLiters: each,
+            source: reference.dataset,
+            note: "Bestands-/Normreferenz. Bauform und Hersteller können abweichen; exakten Wasserinhalt bei bekannten Daten manuell eingeben."
         )
     }
 
