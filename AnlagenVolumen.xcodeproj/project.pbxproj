@@ -1,0 +1,117 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A192D2BCC2DB25FC4E29213D /* VolumeCalcApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3B71B504672EDAAAFB5E75 /* VolumeCalcApp.swift */; };
+		70EE588C003629B12094698A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5C7CA3AAA59DBED958D0315 /* ContentView.swift */; };
+		135D11041F51BDE38C72CB98 /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6410623486B52392DDCC2E /* DesignSystem.swift */; };
+		EA71B27A7ABBC5636C814E76 /* ProjectStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EEF929913A019B6EF3676D8 /* ProjectStore.swift */; };
+		80FF0446E393A6B80707F968 /* VolumeModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E2E898E5CEAD0336550F6AF /* VolumeModels.swift */; };
+		70C9B50C453C69D6454ABC67 /* VolumeCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F2A5AE9EF3D4B4508F15B6 /* VolumeCalculator.swift */; };
+		FB459A2BB3B236C368726BF9 /* ReferenceData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1640C3FE98543FCCE62CF781 /* ReferenceData.swift */; };
+		FCBE206020487168007CCADD /* AddComponentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206CA9ED3FA0485AE7473061 /* AddComponentView.swift */; };
+		F5A0E9E7FCAFA2DC2DB66FFF /* PipeEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8309E7D3E1567CA0D96571A /* PipeEntryView.swift */; };
+		FECEC8B3C7E12384DFB76FB6 /* RadiatorEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D831C4E8E996A470B58AD7 /* RadiatorEntryView.swift */; };
+		BB53A8029DDC80A20AE96863 /* ManualEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BABD751A0975AC7F51BDA9 /* ManualEntryView.swift */; };
+		CBE058333BE150C928430D09 /* ProjectListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C894A3C3B8ECE6AED0BE6E1 /* ProjectListView.swift */; };
+		0E4185ABE4A4952D2B51245B /* ProjectSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ED6C2656C8D5BDEAF8C4A39 /* ProjectSettingsView.swift */; };
+		B8AC1D188E57AAA305899A40 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9BB64FD19ED26E8CD21BD076 /* Assets.xcassets */; };
+		01DAFFEDC37C03B37484F014 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B706BFD6500C411ACDBAF51A /* PrivacyInfo.xcprivacy */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		4C3B71B504672EDAAAFB5E75 /* VolumeCalcApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VolumeCalcApp.swift"; sourceTree = "<group>"; };
+		A5C7CA3AAA59DBED958D0315 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView.swift"; sourceTree = "<group>"; };
+		4C6410623486B52392DDCC2E /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DesignSystem.swift"; sourceTree = "<group>"; };
+		5EEF929913A019B6EF3676D8 /* ProjectStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProjectStore.swift"; sourceTree = "<group>"; };
+		9E2E898E5CEAD0336550F6AF /* VolumeModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Core/VolumeModels.swift"; sourceTree = "<group>"; };
+		68F2A5AE9EF3D4B4508F15B6 /* VolumeCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Core/VolumeCalculator.swift"; sourceTree = "<group>"; };
+		1640C3FE98543FCCE62CF781 /* ReferenceData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Core/ReferenceData.swift"; sourceTree = "<group>"; };
+		206CA9ED3FA0485AE7473061 /* AddComponentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/AddComponentView.swift"; sourceTree = "<group>"; };
+		D8309E7D3E1567CA0D96571A /* PipeEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/PipeEntryView.swift"; sourceTree = "<group>"; };
+		E3D831C4E8E996A470B58AD7 /* RadiatorEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/RadiatorEntryView.swift"; sourceTree = "<group>"; };
+		02BABD751A0975AC7F51BDA9 /* ManualEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ManualEntryView.swift"; sourceTree = "<group>"; };
+		2C894A3C3B8ECE6AED0BE6E1 /* ProjectListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ProjectListView.swift"; sourceTree = "<group>"; };
+		3ED6C2656C8D5BDEAF8C4A39 /* ProjectSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ProjectSettingsView.swift"; sourceTree = "<group>"; };
+		9BB64FD19ED26E8CD21BD076 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets.xcassets"; sourceTree = "<group>"; };
+		B706BFD6500C411ACDBAF51A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PrivacyInfo.xcprivacy"; sourceTree = "<group>"; };
+		38A007151ABE87CC01A5B6E9 /* VolumeCalc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VolumeCalc.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D1897DBBE7DC4EBFD5751F23 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		325F10A6957A34D66CB8C0E4 = {isa = PBXGroup; children = (3A2A88DEEFF3D1D23E496597 /* AnlagenVolumen */, BFE00B156DCFC34C4751A6E5 /* Products */); sourceTree = "<group>"; };
+		3A2A88DEEFF3D1D23E496597 /* AnlagenVolumen */ = {isa = PBXGroup; children = (
+				4C3B71B504672EDAAAFB5E75 /* VolumeCalcApp.swift */,
+				A5C7CA3AAA59DBED958D0315 /* ContentView.swift */,
+				4C6410623486B52392DDCC2E /* DesignSystem.swift */,
+				5EEF929913A019B6EF3676D8 /* ProjectStore.swift */,
+				9E2E898E5CEAD0336550F6AF /* VolumeModels.swift */,
+				68F2A5AE9EF3D4B4508F15B6 /* VolumeCalculator.swift */,
+				1640C3FE98543FCCE62CF781 /* ReferenceData.swift */,
+				206CA9ED3FA0485AE7473061 /* AddComponentView.swift */,
+				D8309E7D3E1567CA0D96571A /* PipeEntryView.swift */,
+				E3D831C4E8E996A470B58AD7 /* RadiatorEntryView.swift */,
+				02BABD751A0975AC7F51BDA9 /* ManualEntryView.swift */,
+				2C894A3C3B8ECE6AED0BE6E1 /* ProjectListView.swift */,
+				3ED6C2656C8D5BDEAF8C4A39 /* ProjectSettingsView.swift */,
+				9BB64FD19ED26E8CD21BD076 /* Assets.xcassets */,
+				B706BFD6500C411ACDBAF51A /* PrivacyInfo.xcprivacy */,
+			); path = AnlagenVolumen; sourceTree = "<group>"; };
+		BFE00B156DCFC34C4751A6E5 /* Products */ = {isa = PBXGroup; children = (38A007151ABE87CC01A5B6E9 /* VolumeCalc.app */); name = Products; sourceTree = "<group>"; };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0E8A3AD980EC179856012B7E /* VolumeCalc */ = {isa = PBXNativeTarget; buildConfigurationList = 8A7B4673EE7E4581B91FBC4C; buildPhases = (60C4A7BCE9558CB20D9ADDCB /* Sources */, D1897DBBE7DC4EBFD5751F23 /* Frameworks */, 6AC696A880E335123309EDD3 /* Resources */); buildRules = (); dependencies = (); name = VolumeCalc; productName = VolumeCalc; productReference = 38A007151ABE87CC01A5B6E9; productType = "com.apple.product-type.application"; };
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		98F54143AB4E86B28C3AFEE0 /* Project object */ = {isa = PBXProject; attributes = {BuildIndependentTargetsInParallel = 1; LastSwiftUpdateCheck = 1600; LastUpgradeCheck = 1600; TargetAttributes = {0E8A3AD980EC179856012B7E = {CreatedOnToolsVersion = 16.0;};};}; buildConfigurationList = C91DFE8190D6AA5E5650E6C4; compatibilityVersion = "Xcode 15.0"; developmentRegion = de; hasScannedForEncodings = 0; knownRegions = (de, en, Base); mainGroup = 325F10A6957A34D66CB8C0E4; productRefGroup = BFE00B156DCFC34C4751A6E5; projectDirPath = ""; projectRoot = ""; targets = (0E8A3AD980EC179856012B7E); };
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6AC696A880E335123309EDD3 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (
+				B8AC1D188E57AAA305899A40 /* Assets.xcassets in Resources */,
+				01DAFFEDC37C03B37484F014 /* PrivacyInfo.xcprivacy in Resources */,
+			); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		60C4A7BCE9558CB20D9ADDCB /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (
+				A192D2BCC2DB25FC4E29213D /* VolumeCalcApp.swift in Sources */,
+				70EE588C003629B12094698A /* ContentView.swift in Sources */,
+				135D11041F51BDE38C72CB98 /* DesignSystem.swift in Sources */,
+				EA71B27A7ABBC5636C814E76 /* ProjectStore.swift in Sources */,
+				80FF0446E393A6B80707F968 /* VolumeModels.swift in Sources */,
+				70C9B50C453C69D6454ABC67 /* VolumeCalculator.swift in Sources */,
+				FB459A2BB3B236C368726BF9 /* ReferenceData.swift in Sources */,
+				FCBE206020487168007CCADD /* AddComponentView.swift in Sources */,
+				F5A0E9E7FCAFA2DC2DB66FFF /* PipeEntryView.swift in Sources */,
+				FECEC8B3C7E12384DFB76FB6 /* RadiatorEntryView.swift in Sources */,
+				BB53A8029DDC80A20AE96863 /* ManualEntryView.swift in Sources */,
+				CBE058333BE150C928430D09 /* ProjectListView.swift in Sources */,
+				0E4185ABE4A4952D2B51245B /* ProjectSettingsView.swift in Sources */,
+			); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		8403DEFC848181E9BE4C9764 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)"; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; ENABLE_TESTABILITY = YES;}; name = Debug; };
+		5FECB3CB406BD8F64CE89A93 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_COMPILATION_MODE = wholemodule; VALIDATE_PRODUCT = YES;}; name = Release; };
+		57780E5B888E69640CCE1D8C /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; ENABLE_PREVIEWS = YES; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = VolumeCalc; INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities"; INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES; INFOPLIST_KEY_UILaunchScreen_Generation = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = de.kamilunavo.volumecalc; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2";}; name = Debug; };
+		C39FAEB1B9333673E01AB91E /* Release */ = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = VolumeCalc; INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities"; INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES; INFOPLIST_KEY_UILaunchScreen_Generation = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = de.kamilunavo.volumecalc; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2";}; name = Release; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C91DFE8190D6AA5E5650E6C4 = {isa = XCConfigurationList; buildConfigurations = (8403DEFC848181E9BE4C9764, 5FECB3CB406BD8F64CE89A93); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		8A7B4673EE7E4581B91FBC4C = {isa = XCConfigurationList; buildConfigurations = (57780E5B888E69640CCE1D8C, C39FAEB1B9333673E01AB91E); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+	};
+	rootObject = 98F54143AB4E86B28C3AFEE0;
+}
