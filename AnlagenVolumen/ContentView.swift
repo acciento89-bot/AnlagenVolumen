@@ -81,7 +81,7 @@ struct ContentView: View {
                 GlassCard {
                     Image(systemName: "plus.square.dashed").font(.title2).foregroundStyle(AppTheme.accent)
                     Text("Noch keine Bauteile").font(.headline)
-                    Text("Rohrleitungen, Fußbodenheizung, Heizkörper, Puffer, Wärmeerzeuger oder beliebige bekannte Wasserinhalte hinzufügen.")
+                    Text("Rohrleitungen, Flächenheizungen, moderne oder alte Heizkörper sowie wasserführende Anlagenkomponenten hinzufügen.")
                         .font(.subheadline).foregroundStyle(AppTheme.muted)
                     Button("Erstes Bauteil hinzufügen") { showAdd = true }
                         .buttonStyle(.borderedProminent).tint(AppTheme.accent).foregroundStyle(.black)
@@ -119,7 +119,7 @@ struct ContentView: View {
     private var methodNote: some View {
         GlassCard {
             Label("Fachlicher Hinweis", systemImage: "info.circle.fill").foregroundStyle(AppTheme.accent)
-            Text("Rohrvolumen wird geometrisch aus dem Innendurchmesser berechnet. Heizkörper-Referenzwerte sind baureihenspezifisch; für eine exakte Hersteller-Auslegung immer den tatsächlichen Wasserinhalt aus den technischen Unterlagen verwenden.")
+            Text("Rohrvolumen wird geometrisch aus dem Innendurchmesser berechnet. Rohr- und Heizkörper-Referenzen sind Arbeitshilfen für typische bzw. historische Abmessungen. Für eine exakte Auslegung haben Herstellerdaten, Typenschild und eindeutig ermittelte Wasserinhalte Vorrang.")
                 .font(.footnote).foregroundStyle(AppTheme.muted)
         }
     }
@@ -162,12 +162,22 @@ private struct ComponentRow: View {
 
     private var icon: String {
         switch component.kind {
-        case .pipe, .floorHeating: return "point.topleft.down.to.point.bottomright.curvepath"
-        case .radiator: return "rectangle.split.3x1"
-        case .buffer: return "cylinder.split.1x2"
-        case .heatGenerator: return "flame.fill"
-        case .hydraulicSeparator: return "arrow.up.arrow.down.circle"
-        case .other: return "drop.circle"
+        case .pipe, .floorHeating, .wallHeating, .ceilingHeating:
+            return "point.topleft.down.to.point.bottomright.curvepath"
+        case .radiator:
+            return "rectangle.split.3x1"
+        case .buffer:
+            return "cylinder.split.1x2"
+        case .heatGenerator:
+            return "flame.fill"
+        case .hydraulicSeparator:
+            return "arrow.up.arrow.down.circle"
+        case .distributor:
+            return "slider.horizontal.3"
+        case .heatExchanger:
+            return "arrow.left.arrow.right"
+        case .other:
+            return "drop.circle"
         }
     }
 }
