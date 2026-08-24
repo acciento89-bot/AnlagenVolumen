@@ -63,8 +63,8 @@ public struct VolumeProject: Identifiable, Codable, Equatable, Sendable {
     public init(
         id: UUID = UUID(),
         name: String = "Neue Anlage",
-        createdAt: Date = .now,
-        updatedAt: Date = .now,
+        createdAt: Date = Date(),
+        updatedAt: Date = Date(),
         reservePercent: Double = 5,
         components: [VolumeComponent] = []
     ) {
