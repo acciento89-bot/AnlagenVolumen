@@ -3,20 +3,28 @@ import Foundation
 public enum ComponentKind: String, Codable, CaseIterable, Sendable {
     case pipe
     case floorHeating
+    case wallHeating
+    case ceilingHeating
     case radiator
     case buffer
     case heatGenerator
     case hydraulicSeparator
+    case distributor
+    case heatExchanger
     case other
 
     public var title: String {
         switch self {
         case .pipe: return "Rohrleitung"
         case .floorHeating: return "Fußbodenheizung"
+        case .wallHeating: return "Wandheizung"
+        case .ceilingHeating: return "Deckenheizung"
         case .radiator: return "Heizkörper"
         case .buffer: return "Puffer / Speicher"
         case .heatGenerator: return "Wärmeerzeuger"
         case .hydraulicSeparator: return "Hydraulische Weiche"
+        case .distributor: return "Verteiler / Sammler"
+        case .heatExchanger: return "Wärmetauscher"
         case .other: return "Sonstiges"
         }
     }
@@ -122,5 +130,43 @@ public struct RadiatorReference: Identifiable, Hashable, Sendable {
         self.heightMM = heightMM
         self.litersPerMeter = litersPerMeter
         self.dataset = dataset
+    }
+}
+
+public struct SectionRadiatorReference: Identifiable, Hashable, Sendable {
+    public enum Material: String, CaseIterable, Sendable {
+        case steel = "Stahl"
+        case castIron = "Guss"
+    }
+
+    public let material: Material
+    public let heightMM: Int
+    public let centerDistanceMM: Int
+    public let depthMM: Int
+    public let litersPerSection: Double
+    public let dataset: String
+
+    public var id: String {
+        "\(material.rawValue)-\(heightMM)-\(centerDistanceMM)-\(depthMM)-\(litersPerSection)"
+    }
+
+    public init(
+        material: Material,
+        heightMM: Int,
+        centerDistanceMM: Int,
+        depthMM: Int,
+        litersPerSection: Double,
+        dataset: String
+    ) {
+        self.material = material
+        self.heightMM = heightMM
+        self.centerDistanceMM = centerDistanceMM
+        self.depthMM = depthMM
+        self.litersPerSection = litersPerSection
+        self.dataset = dataset
+    }
+
+    public var displayName: String {
+        "H \(heightMM) · NA \(centerDistanceMM) · T \(depthMM) mm"
     }
 }
