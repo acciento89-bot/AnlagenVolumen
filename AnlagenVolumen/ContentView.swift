@@ -77,7 +77,7 @@ struct ContentView: View {
 
             HStack(spacing: 8) {
                 ledgerTag("\(project.components.count) Bauteile", icon: "square.stack.3d.up")
-                ledgerTag("+\(project.reservePercent, format: .number.precision(.fractionLength(0...1))) % Reserve", icon: "plusminus")
+                ledgerTag("+\(String(format: "%.1f", project.reservePercent)) % Reserve", icon: "plusminus")
             }
         }
         .padding(17)
@@ -222,7 +222,8 @@ struct ContentView: View {
                 .overlay(RoundedRectangle(cornerRadius: 16).stroke(AppTheme.line))
             } else {
                 VStack(spacing: 8) {
-                    ForEach(Array(project.components.enumerated()), id: \.element.id) { index, component in
+                    ForEach(project.components.indices, id: \.self) { index in
+                        let component = project.components[index]
                         ComponentLedgerRow(index: index + 1, component: component) {
                             var copy = project
                             copy.components.removeAll { $0.id == component.id }
