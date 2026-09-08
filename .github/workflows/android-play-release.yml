@@ -27,6 +27,7 @@ jobs:
         with:
           gradle-version: "9.5.0"
       - name: Validate signing secrets
+        if: github.event_name == 'workflow_dispatch'
         shell: bash
         run: |
           set -euo pipefail
@@ -35,6 +36,7 @@ jobs:
           test -n "$ANDROID_UPLOAD_KEY_ALIAS"
           test -n "$ANDROID_UPLOAD_KEY_PASSWORD"
       - name: Restore Play upload keystore
+        if: github.event_name == 'workflow_dispatch'
         shell: bash
         run: |
           set -euo pipefail
@@ -43,9 +45,10 @@ jobs:
           echo "ANDROID_UPLOAD_KEYSTORE_PATH=$RUNNER_TEMP/volumecalc-upload.jks" >> "$GITHUB_ENV"
       - name: Test release
         run: gradle -p android testReleaseUnitTest --stacktrace
-      - name: Build signed release bundle
+      - name: Build release bundle
         run: gradle -p android bundleRelease --stacktrace
       - name: Verify signed Play bundle
+        if: github.event_name == 'workflow_dispatch'
         shell: bash
         run: |
           set -euo pipefail
@@ -56,6 +59,7 @@ jobs:
           sha256sum "$AAB" | tee android/app/build/outputs/bundle/release/VolumeCalc-1.0.1-3-PlayStore.aab.sha256
           cp "$AAB" android/app/build/outputs/bundle/release/VolumeCalc-1.0.1-3-PlayStore.aab
       - name: Upload signed release bundle
+        if: github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v4
         with:
           name: VolumeCalc-1.0.1-3-PlayStore
