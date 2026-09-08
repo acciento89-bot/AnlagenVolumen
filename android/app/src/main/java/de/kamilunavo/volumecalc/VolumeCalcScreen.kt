@@ -55,21 +55,40 @@ internal fun VolumeCalcApp(
         repository.save(projects)
     }
 
-    MaterialTheme(colorScheme = darkColorScheme(primary = Accent, surface = Bg1)) {
+    MaterialTheme(
+        colorScheme = darkColorScheme(
+            primary = Accent,
+            onPrimary = OnAccent,
+            background = Bg1,
+            onBackground = Color.White,
+            surface = Bg1,
+            onSurface = Color.White,
+            surfaceVariant = Panel,
+            onSurfaceVariant = Color.White
+        )
+    ) {
         Box(
             Modifier
                 .fillMaxSize()
                 .background(Brush.linearGradient(listOf(Bg1, Bg2)))
         ) {
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .statusBarsPadding()
+                    .navigationBarsPadding(),
                 contentPadding = PaddingValues(18.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 item {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Column(Modifier.weight(1f)) {
-                            Text("VolumeCalc", fontSize = 30.sp, fontWeight = FontWeight.Bold)
+                            Text(
+                                "VolumeCalc",
+                                fontSize = 30.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
                             Text(project.name, fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Accent)
                             Text("Anlageninhalt aus realen Bauteilen statt Bauchgefühl.", color = Muted)
                         }
@@ -82,7 +101,10 @@ internal fun VolumeCalcApp(
                 if (project.items.isEmpty()) {
                     item {
                         Card(
-                            colors = CardDefaults.cardColors(containerColor = Panel),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Panel,
+                                contentColor = Color.White
+                            ),
                             shape = RoundedCornerShape(20.dp)
                         ) {
                             Column(
@@ -169,7 +191,10 @@ internal fun VolumeCalcApp(
 @Composable
 internal fun ResultCard(project: UiProject, onSettings: () -> Unit) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = Panel),
+        colors = CardDefaults.cardColors(
+            containerColor = Panel,
+            contentColor = Color.White
+        ),
         shape = RoundedCornerShape(22.dp)
     ) {
         Column(
@@ -200,7 +225,10 @@ internal fun ResultCard(project: UiProject, onSettings: () -> Unit) {
 @Composable
 internal fun ComponentCard(item: UiItem, onDelete: () -> Unit) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = Panel),
+        colors = CardDefaults.cardColors(
+            containerColor = Panel,
+            contentColor = Color.White
+        ),
         shape = RoundedCornerShape(18.dp)
     ) {
         Row(
