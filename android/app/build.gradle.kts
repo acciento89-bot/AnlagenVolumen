@@ -3,6 +3,13 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+val uploadKeystorePath = System.getenv("ANDROID_UPLOAD_KEYSTORE_PATH")
+val uploadStorePassword = System.getenv("ANDROID_UPLOAD_STORE_PASSWORD")
+val uploadKeyAlias = System.getenv("ANDROID_UPLOAD_KEY_ALIAS")
+val uploadKeyPassword = System.getenv("ANDROID_UPLOAD_KEY_PASSWORD")
+val releaseSigningEnabled = listOf(uploadKeystorePath, uploadStorePassword, uploadKeyAlias, uploadKeyPassword)
+    .all { !it.isNullOrBlank() }
+
 android {
     namespace = "de.kamilunavo.volumecalc"
     compileSdk = 36
@@ -21,10 +28,21 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+    if (releaseSigningEnabled) {
+        signingConfigs {
+            create("release") {
+                storeFile = file(requireNotNull(uploadKeystorePath))
+                storePassword = requireNotNull(uploadStorePassword)
+                keyAlias = requireNotNull(uploadKeyAlias)
+                keyPassword = requireNotNull(uploadKeyPassword)
+            }
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            if (releaseSigningEnabled) signingConfig = signingConfigs.getByName("release")
         }
     }
 }
