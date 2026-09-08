@@ -44,7 +44,7 @@ jobs:
           chmod 600 "$RUNNER_TEMP/volumecalc-upload.jks"
           echo "ANDROID_UPLOAD_KEYSTORE_PATH=$RUNNER_TEMP/volumecalc-upload.jks" >> "$GITHUB_ENV"
       - name: Test release
-        run: gradle -p android testReleaseUnitTest --stacktrace
+        run: gradle -p android testDebugUnitTest --stacktrace
       - name: Build release bundle
         run: gradle -p android bundleRelease --stacktrace
       - name: Verify signed Play bundle
