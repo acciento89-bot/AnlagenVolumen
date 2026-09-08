@@ -49,6 +49,7 @@ internal val Bg1 = Color(0xFF03101A)
 internal val Bg2 = Color(0xFF07353B)
 internal val Panel = Color(0x12FFFFFF)
 internal val Muted = Color.White.copy(alpha = 0.66f)
+internal val OnAccent = Color(0xFF06221F)
 
 internal data class UiItem(
     val id: String = UUID.randomUUID().toString(),
