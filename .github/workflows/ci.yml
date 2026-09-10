@@ -6,6 +6,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   core-tests:
     runs-on: ubuntu-latest
@@ -21,6 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - run: xcodebuild -project AnlagenVolumen.xcodeproj -scheme VolumeCalc -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO build
+      - run: xcodebuild -project AnlagenVolumen.xcodeproj -scheme VolumeCalc -sdk iphoneos -configuration Release CODE_SIGNING_ALLOWED=NO build
 
   android-tests:
     runs-on: ubuntu-latest
@@ -34,3 +39,22 @@ jobs:
         with:
           gradle-version: "9.5.0"
       - run: gradle -p android testDebugUnitTest
+
+  review-device-tests:
+    runs-on: macos-26
+    strategy:
+      fail-fast: false
+      matrix:
+        family: [iPhone, iPad]
+    steps:
+      - uses: actions/checkout@v5
+      - run: brew install xcodegen
+      - run: xcodegen generate --spec review-project.yml
+      - run: python3 scripts/review-device-tests.py VolumeCalc "${{ matrix.family }}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: review-VolumeCalc-${{ matrix.family }}
+          path: review-results
+          if-no-files-found: error
+          retention-days: 14

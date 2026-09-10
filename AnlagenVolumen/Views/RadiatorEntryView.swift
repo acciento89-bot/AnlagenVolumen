@@ -121,7 +121,7 @@ struct RadiatorEntryView: View {
                     Text("Gesamt").font(.caption.bold()).foregroundStyle(AppTheme.muted)
                     HStack(alignment: .firstTextBaseline) {
                         Text(total, format: .number.precision(.fractionLength(2)))
-                            .font(.system(size: 34, weight: .bold, design: .rounded))
+                            .font(.title.bold())
                             .foregroundStyle(AppTheme.accent)
                         Text("l").foregroundStyle(AppTheme.muted)
                     }
@@ -142,7 +142,7 @@ struct RadiatorEntryView: View {
                 Button("Hinzufügen") { save() }
                     .buttonStyle(.borderedProminent)
                     .tint(AppTheme.accent)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(.white)
                     .disabled(total <= 0)
             }
             .padding(18)
