@@ -1,8 +1,8 @@
 # Validation — VolumeCalc, 2026-09-10
 
-Validated source commit: `7577ead8d97b60c5f635590a67d306d0ab45dc5b`.
+Validated source commit: `2620d76f4e58ebd66069769f61122d785edd18b7`.
 
-[CI run 31](https://github.com/acciento89-bot/AnlagenVolumen/actions/runs/34448963663) passed all five jobs. The final documentation-only commit does not change the tested source or configuration.
+[CI run 33](https://github.com/acciento89-bot/AnlagenVolumen/actions/runs/34451502419) passed all five jobs. This includes the final two-line contrast improvement for component sources and notes; their text now uses the full-opacity primary foreground. The preceding complete workflow also passed in run 31. The final documentation-only commit does not change the tested source or configuration.
 
 ## Successful checks
 
