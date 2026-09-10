@@ -412,8 +412,8 @@ struct FillAuditView: View {
                         Button { sourceDraft = component } label: {
                             VStack(alignment: .leading, spacing: 6) {
                                 Text(component.name).font(.headline).foregroundStyle(.primary)
-                                Text(component.source?.isEmpty == false ? component.source! : "Quelle ergänzen: Hersteller, Messung oder Schätzung").foregroundStyle(.secondary)
-                                if let note = component.note, !note.isEmpty { Text(note).foregroundStyle(.secondary) }
+                                Text(component.source?.isEmpty == false ? component.source! : "Quelle ergänzen: Hersteller, Messung oder Schätzung").foregroundStyle(.primary)
+                                if let note = component.note, !note.isEmpty { Text(note).foregroundStyle(.primary) }
                             }.padding(.vertical, 5)
                         }
                     }
