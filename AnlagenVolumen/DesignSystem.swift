@@ -79,12 +79,12 @@ struct MetricCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text(title.uppercased())
-                .font(.caption2.weight(.black))
+                .font(.subheadline.weight(.bold))
                 .tracking(0.8)
                 .foregroundStyle(AppTheme.muted)
             HStack(alignment: .firstTextBaseline, spacing: 5) {
                 Text(value, format: .number.precision(.fractionLength(1)))
-                    .font(.system(size: emphasized ? 32 : 25, weight: .bold, design: .monospaced))
+                    .font(.title2.bold().monospacedDigit())
                     .foregroundStyle(emphasized ? AppTheme.accent : AppTheme.ink)
                 Text("l")
                     .font(.subheadline.bold())
@@ -108,30 +108,23 @@ struct NumberField: View {
     @FocusState private var focused: Bool
 
     var body: some View {
-        HStack(spacing: 12) {
-            Text(title)
-                .foregroundStyle(AppTheme.ink)
-            Spacer()
-            TextField("0", value: $value, format: .number.precision(.fractionLength(0...2)))
-                .keyboardType(.decimalPad)
-                .multilineTextAlignment(.trailing)
-                .font(.system(.body, design: .monospaced).weight(.semibold))
-                .foregroundStyle(AppTheme.ink)
-                .focused($focused)
-                .frame(width: 92)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 8)
-                .background(Color.white.opacity(0.8), in: RoundedRectangle(cornerRadius: 8))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(focused ? AppTheme.accent : AppTheme.line, lineWidth: focused ? 1.4 : 1)
-                }
-            Text(unit)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(AppTheme.muted)
-                .frame(minWidth: 38, alignment: .leading)
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title).font(.body).foregroundStyle(AppTheme.ink)
+            HStack(alignment: .firstTextBaseline) {
+                TextField("0", value: $value, format: .number.precision(.fractionLength(0...2)))
+                    .keyboardType(.decimalPad)
+                    .font(.title3.monospacedDigit())
+                    .foregroundStyle(AppTheme.ink)
+                    .accessibilityLabel(title + ", " + unit)
+                    .focused($focused)
+                    .padding(10)
+                    .background(Color.white, in: RoundedRectangle(cornerRadius: 8))
+                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(focused ? AppTheme.accent : AppTheme.line))
+                Text(unit).font(.body).foregroundStyle(AppTheme.muted)
+            }
         }
     }
+
 }
 
 extension View {
@@ -143,6 +136,28 @@ extension View {
                     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                 }
                 .fontWeight(.semibold)
+            }
+        }
+    }
+}
+
+
+/// Collapse dense ledger rows into a vertical layout for accessibility text.
+struct AdaptiveLedgerRow<Content: View>: View {
+    @Environment(\.dynamicTypeSize) private var typeSize
+    let alignment: VerticalAlignment
+    let spacing: CGFloat?
+    let content: () -> Content
+    init(alignment: VerticalAlignment = .center, spacing: CGFloat? = nil, @ViewBuilder content: @escaping () -> Content) {
+        self.alignment = alignment; self.spacing = spacing; self.content = content
+    }
+    var body: some View {
+        if typeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: spacing, content: content)
+        } else {
+            ViewThatFits(in: .horizontal) {
+                HStack(alignment: alignment, spacing: spacing, content: content)
+                VStack(alignment: .leading, spacing: spacing, content: content)
             }
         }
     }

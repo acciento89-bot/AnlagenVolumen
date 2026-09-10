@@ -70,7 +70,7 @@ struct InventoryView: View {
 
     private var ledgerHeader: some View {
         VStack(alignment: .leading, spacing: 15) {
-            HStack(alignment: .top, spacing: 14) {
+            AdaptiveLedgerRow(alignment: .top, spacing: 14) {
                 VolumeHeroIcon()
                 VStack(alignment: .leading, spacing: 4) {
                     Text("ANLAGENINVENTAR")
@@ -87,7 +87,7 @@ struct InventoryView: View {
                 Spacer()
             }
 
-            HStack(spacing: 8) {
+            AdaptiveLedgerRow(spacing: 8) {
                 ledgerTag("\(project.components.count) Bauteile", icon: "square.stack.3d.up")
                 ledgerTag("+\(String(format: "%.1f", project.reservePercent)) % Reserve", icon: "plusminus")
             }
@@ -99,7 +99,7 @@ struct InventoryView: View {
 
     private var planningTotal: some View {
         VStack(alignment: .leading, spacing: 14) {
-            HStack {
+            AdaptiveLedgerRow {
                 Text("SUMMENBLATT")
                     .font(.subheadline.weight(.bold))
                     .tracking(1.2)
@@ -113,12 +113,12 @@ struct InventoryView: View {
                 }
             }
 
-            HStack(alignment: .bottom) {
+            AdaptiveLedgerRow(alignment: .bottom) {
                 VStack(alignment: .leading, spacing: 3) {
                     Text("PLANUNGSWERT")
                         .font(.subheadline.weight(.bold))
                         .foregroundStyle(AppTheme.accent)
-                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    AdaptiveLedgerRow(alignment: .firstTextBaseline, spacing: 6) {
                         Text(project.planningVolumeLiters, format: .number.precision(.fractionLength(1)))
                             .font(.largeTitle.bold().monospacedDigit())
                             .foregroundStyle(AppTheme.ink)
@@ -135,7 +135,7 @@ struct InventoryView: View {
 
             Divider().overlay(AppTheme.line)
 
-            HStack(spacing: 10) {
+            AdaptiveLedgerRow(spacing: 10) {
                 MetricCard(title: "Berechnet", value: project.calculatedVolumeLiters, emphasized: true)
                 MetricCard(title: "Reserve", value: project.reserveLiters, emphasized: false)
             }
@@ -152,7 +152,7 @@ struct InventoryView: View {
     }
 
     private var quickActions: some View {
-        HStack(spacing: 11) {
+        AdaptiveLedgerRow(spacing: 11) {
             Button { showAdd = true } label: {
                 VStack(alignment: .leading, spacing: 8) {
                     Image(systemName: "plus.square.fill")
@@ -191,7 +191,7 @@ struct InventoryView: View {
 
     private var componentLedger: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack {
+            AdaptiveLedgerRow {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("BAUTEILLISTE")
                         .font(.subheadline.weight(.bold))
@@ -212,7 +212,7 @@ struct InventoryView: View {
 
             if project.components.isEmpty {
                 VStack(alignment: .leading, spacing: 12) {
-                    HStack(spacing: 12) {
+                    AdaptiveLedgerRow(spacing: 12) {
                         Image(systemName: "shippingbox")
                             .font(.title2)
                             .foregroundStyle(AppTheme.accent)
@@ -291,7 +291,7 @@ private struct ComponentLedgerRow: View {
     let delete: () -> Void
 
     var body: some View {
-        HStack(alignment: .center, spacing: 12) {
+        AdaptiveLedgerRow(alignment: .center, spacing: 12) {
             Text(String(format: "%02d", index))
                 .font(.system(.caption, design: .monospaced).weight(.black))
                 .foregroundStyle(AppTheme.muted)

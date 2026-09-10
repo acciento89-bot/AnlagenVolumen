@@ -34,3 +34,18 @@ jobs:
         with:
           gradle-version: "9.5.0"
       - run: gradle -p android testDebugUnitTest
+
+  review-device-tests:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v5
+      - run: brew install xcodegen
+      - run: xcodegen generate --spec review-project.yml
+      - run: python3 scripts/review-device-tests.py VolumeCalc
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: review-VolumeCalc
+          path: review-results
+          if-no-files-found: error
+          retention-days: 14
