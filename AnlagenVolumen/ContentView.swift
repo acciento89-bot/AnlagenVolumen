@@ -525,7 +525,7 @@ private struct AuditNumber: View {
     }
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(title)
+            Text(LocalizedStringKey(title))
             TextField(unit, text: $text).keyboardType(.decimalPad).font(.title3.monospacedDigit())
                 .accessibilityLabel(title + ", " + unit)
                 .onChange(of: text) { _, raw in value = Double(raw.replacingOccurrences(of: Locale.current.decimalSeparator ?? ".", with: ".")) ?? .nan }

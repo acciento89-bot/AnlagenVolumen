@@ -58,7 +58,7 @@ struct PipeEntryView: View {
                     Text("Vorschau").font(.caption.bold()).foregroundStyle(AppTheme.muted)
                     HStack(alignment: .firstTextBaseline) {
                         Text(volume, format: .number.precision(.fractionLength(2)))
-                            .font(.system(size: 34, weight: .bold, design: .rounded))
+                            .font(.title.bold())
                             .foregroundStyle(AppTheme.accent)
                         Text("l").foregroundStyle(AppTheme.muted)
                         Spacer()
@@ -74,7 +74,7 @@ struct PipeEntryView: View {
                 Button("Hinzufügen") { save() }
                     .buttonStyle(.borderedProminent)
                     .tint(AppTheme.accent)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .disabled(lengthMeters <= 0 || circuits <= 0 || diameter <= 0)
             }

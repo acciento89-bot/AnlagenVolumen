@@ -39,7 +39,7 @@ struct ManualEntryView: View {
                     Text("Gesamt").font(.caption.bold()).foregroundStyle(AppTheme.muted)
                     HStack(alignment: .firstTextBaseline) {
                         Text(liters * quantity, format: .number.precision(.fractionLength(2)))
-                            .font(.system(size: 34, weight: .bold, design: .rounded))
+                            .font(.title.bold())
                             .foregroundStyle(AppTheme.accent)
                         Text("l").foregroundStyle(AppTheme.muted)
                     }
@@ -48,7 +48,7 @@ struct ManualEntryView: View {
                 Button("Hinzufügen") { save() }
                     .buttonStyle(.borderedProminent)
                     .tint(AppTheme.accent)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(.white)
                     .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || liters <= 0 || quantity <= 0)
             }
             .padding(18)

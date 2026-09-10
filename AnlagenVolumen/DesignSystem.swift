@@ -109,7 +109,7 @@ struct NumberField: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(title).font(.body).foregroundStyle(AppTheme.ink)
+            Text(LocalizedStringKey(title)).font(.body).foregroundStyle(AppTheme.ink)
             HStack(alignment: .firstTextBaseline) {
                 TextField("0", value: $value, format: .number.precision(.fractionLength(0...2)))
                     .keyboardType(.decimalPad)

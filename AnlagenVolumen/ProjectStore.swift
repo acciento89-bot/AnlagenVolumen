@@ -73,6 +73,7 @@ final class ProjectStore: ObservableObject {
             let data = try JSONEncoder.app.encode(next)
             try data.write(to: fileURL, options: [.atomic])
             projects = next
+            self.error = nil
             return true
         } catch {
             self.error = "Nicht gespeichert. Bitte freien Gerätespeicher prüfen und erneut versuchen."

@@ -21,6 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - run: xcodebuild -project AnlagenVolumen.xcodeproj -scheme VolumeCalc -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO build
+      - run: xcodebuild -project AnlagenVolumen.xcodeproj -scheme VolumeCalc -sdk iphoneos -configuration Release CODE_SIGNING_ALLOWED=NO build
 
   android-tests:
     runs-on: ubuntu-latest
