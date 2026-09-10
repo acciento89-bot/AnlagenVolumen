@@ -14,7 +14,7 @@ final class FillWorkflowUITests: XCTestCase {
         if addFirst.exists {
             for _ in 0..<5 where !addFirst.isHittable { app.swipeUp() }
             addFirst.tap()
-            let add = app.buttons["Hinzufügen"]
+            let add = app.scrollViews.buttons["Hinzufügen"]
             XCTAssertTrue(add.waitForExistence(timeout: 5))
             for _ in 0..<5 where !add.isHittable { app.swipeUp() }
             add.tap()
