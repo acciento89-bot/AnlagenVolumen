@@ -6,6 +6,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   core-tests:
     runs-on: ubuntu-latest
@@ -38,15 +42,19 @@ jobs:
 
   review-device-tests:
     runs-on: macos-26
+    strategy:
+      fail-fast: false
+      matrix:
+        family: [iPhone, iPad]
     steps:
       - uses: actions/checkout@v5
       - run: brew install xcodegen
       - run: xcodegen generate --spec review-project.yml
-      - run: python3 scripts/review-device-tests.py VolumeCalc
+      - run: python3 scripts/review-device-tests.py VolumeCalc "${{ matrix.family }}"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: review-VolumeCalc
+          name: review-VolumeCalc-${{ matrix.family }}
           path: review-results
           if-no-files-found: error
           retention-days: 14

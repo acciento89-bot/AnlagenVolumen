@@ -5,7 +5,10 @@ scheme = sys.argv[1]
 raw = json.loads(subprocess.check_output(['xcrun', 'simctl', 'list', 'devices', 'available', '--json']))
 devices = [d for runtime, rows in raw['devices'].items() if 'iOS' in runtime for d in rows if d.get('isAvailable')]
 out = pathlib.Path('review-results'); out.mkdir(exist_ok=True)
-for family in ['iPhone', 'iPad']:
+families = sys.argv[2:] or ['iPhone', 'iPad']
+if any(f not in ['iPhone', 'iPad'] for f in families):
+    raise SystemExit('Expected iPhone or iPad')
+for family in families:
     device = next((d for d in devices if d['name'].startswith(family)), None)
     if not device:
         raise SystemExit(f'No available {family} simulator; cannot complete device validation')

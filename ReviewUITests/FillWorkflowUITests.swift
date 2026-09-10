@@ -10,7 +10,7 @@ final class FillWorkflowUITests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments = ["-AppleLanguages", "(de)", "-AppleLocale", "de_DE"]
         app.launch()
-        XCTAssertTrue(app.buttons["Füllabgleich"].waitForExistence(timeout: 15))
+        XCTAssertTrue(app.buttons["Füllabgleich"].firstMatch.waitForExistence(timeout: 15))
         capture(app, "01-inventory")
         let addFirst = app.buttons["Erstes Bauteil hinzufügen"]
         if addFirst.exists {
@@ -21,7 +21,7 @@ final class FillWorkflowUITests: XCTestCase {
             for _ in 0..<5 where !add.isHittable { app.swipeUp() }
             add.tap()
         }
-        app.buttons["Füllabgleich"].tap()
+        app.buttons["Füllabgleich"].firstMatch.tap()
         XCTAssertTrue(app.staticTexts["Berechnet trifft eingefüllt."].waitForExistence(timeout: 5))
         capture(app, "02-fill-audit")
         let addFill = app.buttons["Füllabgleich erfassen"]
@@ -40,7 +40,7 @@ final class FillWorkflowUITests: XCTestCase {
         capture(app, "03-fill-editor")
         app.buttons["Speichern"].tap()
         app.terminate(); app.launch()
-        app.buttons["Füllabgleich"].tap()
+        app.buttons["Füllabgleich"].firstMatch.tap()
         let saved = app.staticTexts["10 l eingefüllt"]
         for _ in 0..<6 where !saved.isHittable { app.swipeUp() }
         XCTAssertTrue(saved.exists)
@@ -48,9 +48,9 @@ final class FillWorkflowUITests: XCTestCase {
         app.terminate()
         app.launchArguments += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
         app.launch()
-        XCTAssertTrue(app.buttons["Füllabgleich"].waitForExistence(timeout: 15))
+        XCTAssertTrue(app.buttons["Füllabgleich"].firstMatch.waitForExistence(timeout: 15))
         capture(app, "03-accessibility-inventory")
-        app.buttons["Füllabgleich"].tap()
+        app.buttons["Füllabgleich"].firstMatch.tap()
         capture(app, "04-accessibility-audit")
     }
 }
