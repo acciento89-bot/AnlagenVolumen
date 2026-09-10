@@ -67,6 +67,7 @@ public struct VolumeProject: Identifiable, Codable, Equatable, Sendable {
     public var updatedAt: Date
     public var reservePercent: Double
     public var components: [VolumeComponent]
+    public var fillChecks: [FillCheck]? = nil
 
     public init(
         id: UUID = UUID(),
@@ -168,5 +169,40 @@ public struct SectionRadiatorReference: Identifiable, Hashable, Sendable {
 
     public var displayName: String {
         "H \(heightMM) · NA \(centerDistanceMM) · T \(depthMM) mm"
+    }
+}
+
+/// One complete fill of an initially empty, isolated system. The inventory baseline is frozen.
+public struct FillCheck: Identifiable, Codable, Equatable, Sendable {
+    public var id = UUID()
+    public var date = Date()
+    public var meterStartL = 0.0
+    public var meterEndL = 0.0
+    public var drainedL = 0.0
+    public var tolerancePercent = 10.0
+    public var calculatedBaselineL = 0.0
+    public var componentCount = 0
+    public var note = ""
+    public var confirmedEmptySystem = false
+    public init() {}
+    public var netFillL: Double { meterEndL - meterStartL - drainedL }
+    public var deviationL: Double { netFillL - calculatedBaselineL }
+    public var deviationPercent: Double? {
+        calculatedBaselineL > 0 ? deviationL / calculatedBaselineL * 100 : nil
+    }
+    public var isValid: Bool {
+        [meterStartL, meterEndL, drainedL, tolerancePercent, calculatedBaselineL].allSatisfy(\.isFinite) &&
+        meterStartL >= 0 && meterEndL > meterStartL && drainedL >= 0 && netFillL > 0 &&
+        calculatedBaselineL > 0 && tolerancePercent >= 0 && tolerancePercent <= 100 && confirmedEmptySystem
+    }
+    public var isWithinTolerance: Bool { deviationPercent.map { abs($0) <= tolerancePercent + 1e-9 } ?? false }
+}
+
+public extension VolumeProject {
+    var undocumentedComponents: [VolumeComponent] {
+        components.filter { ($0.source ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    }
+    func totalLiters(for kind: ComponentKind) -> Double {
+        components.filter { $0.kind == kind }.reduce(0) { $0 + $1.totalLiters }
     }
 }

@@ -5,6 +5,8 @@ import Combine
 final class ProjectStore: ObservableObject {
     @Published var projects: [VolumeProject] = []
     @Published var selectedProjectID: UUID?
+    @Published var error: String?
+    private var loadFailed = false
 
     init() { load() }
 
@@ -15,34 +17,35 @@ final class ProjectStore: ObservableObject {
         }
         set {
             guard let newValue else { return }
-            upsert(newValue)
-            selectedProjectID = newValue.id
+            if upsert(newValue) { selectedProjectID = newValue.id }
         }
     }
 
     func createProject(name: String = "Neue Anlage") {
         let project = VolumeProject(name: name)
-        projects.insert(project, at: 0)
-        selectedProjectID = project.id
-        save()
+        if persist([project] + projects) { selectedProjectID = project.id }
     }
 
-    func upsert(_ project: VolumeProject) {
+    @discardableResult func upsert(_ project: VolumeProject) -> Bool {
+        guard project.reservePercent.isFinite, project.reservePercent >= 0,
+              project.components.allSatisfy({ $0.quantity.isFinite && $0.quantity >= 0 && $0.unitVolumeLiters.isFinite && $0.unitVolumeLiters >= 0 }),
+              (project.fillChecks ?? []).allSatisfy(\.isValid) else {
+            error = "Nicht gespeichert: Bitte gültige Mengen und Reserven eingeben."
+            return false
+        }
         var changed = project
         changed.updatedAt = .now
-        if let index = projects.firstIndex(where: { $0.id == changed.id }) {
-            projects[index] = changed
-        } else {
-            projects.insert(changed, at: 0)
-        }
-        projects.sort { $0.updatedAt > $1.updatedAt }
-        save()
+        var next = projects
+        if let index = next.firstIndex(where: { $0.id == changed.id }) { next[index] = changed }
+        else { next.insert(changed, at: 0) }
+        next.sort { $0.updatedAt > $1.updatedAt }
+        return persist(next)
     }
 
     func deleteProject(_ project: VolumeProject) {
-        projects.removeAll { $0.id == project.id }
-        if selectedProjectID == project.id { selectedProjectID = projects.first?.id }
-        if projects.isEmpty { createProject() } else { save() }
+        var next = projects.filter { $0.id != project.id }
+        if next.isEmpty { next = [VolumeProject()] }
+        if persist(next), selectedProjectID == project.id { selectedProjectID = next.first?.id }
     }
 
     private var fileURL: URL {
@@ -51,23 +54,32 @@ final class ProjectStore: ObservableObject {
     }
 
     private func load() {
+        guard FileManager.default.fileExists(atPath: fileURL.path) else {
+            projects = [VolumeProject()]; selectedProjectID = projects.first?.id; return
+        }
         do {
             let data = try Data(contentsOf: fileURL)
             projects = try JSONDecoder.app.decode([VolumeProject].self, from: data)
         } catch {
-            projects = [VolumeProject()]
+            loadFailed = true
+            self.error = "Vorhandene Projekte konnten nicht geöffnet werden. Die Datei bleibt unverändert; Speichern ist zum Schutz der Daten gesperrt."
         }
         selectedProjectID = projects.first?.id
     }
 
-    private func save() {
+    private func persist(_ next: [VolumeProject]) -> Bool {
+        guard !loadFailed else { error = "Speichern gesperrt, um vorhandene Daten zu erhalten. Bitte App-Support kontaktieren."; return false }
         do {
-            let data = try JSONEncoder.app.encode(projects)
+            let data = try JSONEncoder.app.encode(next)
             try data.write(to: fileURL, options: [.atomic])
+            projects = next
+            return true
         } catch {
-            assertionFailure("Project save failed: \(error)")
+            self.error = "Nicht gespeichert. Bitte freien Gerätespeicher prüfen und erneut versuchen."
+            return false
         }
     }
+
 }
 
 private extension JSONEncoder {

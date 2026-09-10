@@ -93,3 +93,42 @@ final class VolumeCalculatorTests: XCTestCase {
         XCTAssertEqual(VolumeCalculator.sectionRadiatorVolumeLiters(litersPerSection: 1, sections: -1), 0)
     }
 }
+
+final class FillCheckTests: XCTestCase {
+    func testNetFillSubtractsDrainedWaterAndUsesFrozenInventory() {
+        var check = FillCheck(); check.meterStartL = 100; check.meterEndL = 220; check.drainedL = 10
+        check.calculatedBaselineL = 100; check.confirmedEmptySystem = true
+        XCTAssertTrue(check.isValid)
+        XCTAssertEqual(check.netFillL, 110)
+        XCTAssertEqual(check.deviationL, 10)
+        XCTAssertEqual(check.deviationPercent, 10)
+        XCTAssertTrue(check.isWithinTolerance)
+    }
+    func testInvalidOrPartialFillCannotBeRecorded() {
+        var check = FillCheck(); check.meterEndL = 100; check.calculatedBaselineL = 100
+        XCTAssertFalse(check.isValid)
+        check.confirmedEmptySystem = true; XCTAssertTrue(check.isValid)
+        check.drainedL = 101; XCTAssertFalse(check.isValid)
+        check.drainedL = 0; check.meterEndL = .nan; XCTAssertFalse(check.isValid)
+    }
+    func testOldProjectsDecodeWithoutFillChecks() throws {
+        let id = UUID()
+        let json = """
+        {"id":"\(id.uuidString)","name":"Old","createdAt":0,"updatedAt":0,"reservePercent":5,"components":[]}
+        """
+        let project = try JSONDecoder().decode(VolumeProject.self, from: Data(json.utf8))
+        XCTAssertEqual(project.id, id)
+        XCTAssertNil(project.fillChecks)
+    }
+    func testReserveNeverChangesFillBaseline() throws {
+        var project = VolumeProject(components: [.init(kind: .buffer, name: "Buffer", unitVolumeLiters: 100)])
+        var check = FillCheck(); check.calculatedBaselineL = project.calculatedVolumeLiters
+        project.fillChecks = [check]; project.reservePercent = 50
+        project.components.append(.init(kind: .other, name: "Addition", unitVolumeLiters: 20))
+        XCTAssertEqual(project.fillChecks?.first?.calculatedBaselineL, 100)
+        XCTAssertEqual(project.calculatedVolumeLiters, 120)
+        XCTAssertEqual(project.planningVolumeLiters, 180)
+        let restored = try JSONDecoder().decode(VolumeProject.self, from: JSONEncoder().encode(project))
+        XCTAssertEqual(restored, project)
+    }
+}

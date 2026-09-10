@@ -2,6 +2,18 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var store: ProjectStore
+    var body: some View {
+        TabView {
+            InventoryView().tabItem { Label("Inventar", systemImage: "shippingbox") }
+            FillAuditView().tabItem { Label("Füllabgleich", systemImage: "drop.halffull") }
+        }.tint(AppTheme.accent).preferredColorScheme(.light)
+            .alert("Projektdaten", isPresented: Binding(get: { store.error != nil }, set: { if !$0 { store.error = nil } })) { Button("OK") { store.error = nil } } message: { Text(store.error ?? "") }
+    }
+}
+
+
+struct InventoryView: View {
+    @EnvironmentObject private var store: ProjectStore
     @State private var showAdd = false
     @State private var showProjects = false
 
@@ -62,11 +74,11 @@ struct ContentView: View {
                 VolumeHeroIcon()
                 VStack(alignment: .leading, spacing: 4) {
                     Text("ANLAGENINVENTAR")
-                        .font(.caption2.weight(.black))
+                        .font(.subheadline.weight(.bold))
                         .tracking(1.8)
                         .foregroundStyle(AppTheme.accent)
                     Text(project.name)
-                        .font(.system(size: 27, weight: .bold, design: .rounded))
+                        .font(.title.bold())
                         .foregroundStyle(AppTheme.ink)
                     Text("Wasserinhalt Bauteil für Bauteil erfassen")
                         .font(.subheadline)
@@ -89,7 +101,7 @@ struct ContentView: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Text("SUMMENBLATT")
-                    .font(.caption2.weight(.black))
+                    .font(.subheadline.weight(.bold))
                     .tracking(1.2)
                     .foregroundStyle(AppTheme.muted)
                 Spacer()
@@ -104,11 +116,11 @@ struct ContentView: View {
             HStack(alignment: .bottom) {
                 VStack(alignment: .leading, spacing: 3) {
                     Text("PLANUNGSWERT")
-                        .font(.caption2.weight(.black))
+                        .font(.subheadline.weight(.bold))
                         .foregroundStyle(AppTheme.accent)
                     HStack(alignment: .firstTextBaseline, spacing: 6) {
                         Text(project.planningVolumeLiters, format: .number.precision(.fractionLength(1)))
-                            .font(.system(size: 46, weight: .bold, design: .monospaced))
+                            .font(.largeTitle.bold().monospacedDigit())
                             .foregroundStyle(AppTheme.ink)
                         Text("Liter")
                             .font(.subheadline.bold())
@@ -148,7 +160,7 @@ struct ContentView: View {
                     Text("Bauteil erfassen")
                         .font(.subheadline.weight(.bold))
                     Text("Rohr · Heizkörper · Speicher")
-                        .font(.caption2)
+                        .font(.subheadline)
                         .opacity(0.78)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -165,7 +177,7 @@ struct ContentView: View {
                     Text("Summen teilen")
                         .font(.subheadline.weight(.bold))
                     Text("Für Bericht oder MAG")
-                        .font(.caption2)
+                        .font(.subheadline)
                         .opacity(0.78)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -182,7 +194,7 @@ struct ContentView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("BAUTEILLISTE")
-                        .font(.caption2.weight(.black))
+                        .font(.subheadline.weight(.bold))
                         .tracking(1.2)
                         .foregroundStyle(AppTheme.muted)
                     Text("Anlageninhalt nach Komponenten")
@@ -296,13 +308,13 @@ private struct ComponentLedgerRow: View {
                     .font(.subheadline.weight(.bold))
                     .foregroundStyle(AppTheme.ink)
                 Text(component.kind.title)
-                    .font(.caption2)
+                    .font(.subheadline)
                     .foregroundStyle(AppTheme.muted)
                 if let source = component.source {
                     Text(source)
-                        .font(.caption2)
+                        .font(.subheadline)
                         .foregroundStyle(AppTheme.muted.opacity(0.85))
-                        .lineLimit(1)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
 
@@ -313,7 +325,7 @@ private struct ComponentLedgerRow: View {
                     .font(.system(.headline, design: .monospaced).weight(.bold))
                     .foregroundStyle(AppTheme.ink)
                 Text("Liter")
-                    .font(.caption2.weight(.semibold))
+                    .font(.subheadline.weight(.semibold))
                     .foregroundStyle(AppTheme.muted)
             }
         }
@@ -364,5 +376,160 @@ private struct VolumeLedgerLines: View {
         }
         .ignoresSafeArea()
         .allowsHitTesting(false)
+    }
+}
+
+private func volumeText(_ value: Double) -> String { value.formatted(.number.precision(.fractionLength(0...2))) }
+
+struct FillAuditView: View {
+    @EnvironmentObject private var store: ProjectStore
+    @State private var adding = false
+    @State private var sourceDraft: VolumeComponent?
+    @State private var deleting: FillCheck?
+    private var project: VolumeProject { store.selectedProject ?? VolumeProject() }
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    Label("VOLUMEN NACHWEISEN", systemImage: "drop.halffull").font(.headline)
+                    Text("Berechnet trifft eingefüllt.").font(.largeTitle.bold())
+                    Text("Vergleiche das Bauteilinventar mit einer vollständigen Befüllung. Halte die Datengrundlage und offene Quellen für die Übergabe fest.").foregroundStyle(.secondary)
+                    Text(project.name).font(.headline)
+                }
+                Section("Inventar nach Bauteilart") {
+                    ForEach(ComponentKind.allCases.filter { project.totalLiters(for: $0) > 0 }, id: \.self) { kind in
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text(kind.title).font(.headline)
+                            Text("\(volumeText(project.totalLiters(for: kind))) l").font(.title3.monospacedDigit())
+                        }
+                    }
+                    LabeledContent("Berechneter Wasserinhalt", value: "\(volumeText(project.calculatedVolumeLiters)) l")
+                    Text("Die Planungsreserve wird beim Füllabgleich nicht als realer Wasserinhalt mitgerechnet.").foregroundStyle(.secondary)
+                }
+                Section("Datengrundlage prüfen") {
+                    Text("\(project.undocumentedComponents.count) von \(project.components.count) Bauteilen ohne Quellenangabe").font(.headline)
+                    ForEach(project.components) { component in
+                        Button { sourceDraft = component } label: {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(component.name).font(.headline).foregroundStyle(.primary)
+                                Text(component.source?.isEmpty == false ? component.source! : "Quelle ergänzen: Hersteller, Messung oder Schätzung").foregroundStyle(.secondary)
+                                if let note = component.note, !note.isEmpty { Text(note).foregroundStyle(.secondary) }
+                            }.padding(.vertical, 5)
+                        }
+                    }
+                }
+                Section("Vollständige Befüllungen") {
+                    Button { adding = true } label: { Label("Füllabgleich erfassen", systemImage: "plus.circle.fill") }
+                        .disabled(project.calculatedVolumeLiters <= 0)
+                    if (project.fillChecks ?? []).isEmpty { Text("Noch kein Abgleich. Erfasse zuerst das Inventar und anschließend eine vollständige Befüllung der anfangs leeren Anlage.").foregroundStyle(.secondary) }
+                    ForEach((project.fillChecks ?? []).sorted { $0.date > $1.date }) { check in
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text(check.date.formatted(date: .abbreviated, time: .shortened)).font(.headline)
+                            Text("\(volumeText(check.netFillL)) l eingefüllt").font(.title2.bold())
+                            Text("Inventar zum Messzeitpunkt: \(volumeText(check.calculatedBaselineL)) l · \(check.componentCount) Bauteile")
+                            Text("Abweichung: \(volumeText(check.deviationL)) l / \(volumeText(check.deviationPercent ?? 0)) %").font(.headline)
+                            Label(check.isWithinTolerance ? "Innerhalb Projekttoleranz" : "Abweichung untersuchen", systemImage: check.isWithinTolerance ? "checkmark.circle" : "exclamationmark.triangle")
+                            Text("Zähler \(volumeText(check.meterStartL)) → \(volumeText(check.meterEndL)) l; abgelassen \(volumeText(check.drainedL)) l; Toleranz ±\(volumeText(check.tolerancePercent)) %").foregroundStyle(.secondary)
+                            if !check.note.isEmpty { Text(check.note) }
+                            Button("Abgleich löschen", role: .destructive) { deleting = check }
+                        }.padding(.vertical, 8)
+                    }
+                }
+                Section("Übergabe") {
+                    ShareLink(item: evidenceReport) { Label("Inventar- und Füllnachweis teilen", systemImage: "square.and.arrow.up") }
+                    Text("Ein Abgleich gilt für eine anfangs leere Anlage innerhalb derselben Systemgrenzen. Nachfüllungen im laufenden Betrieb sind dafür ungeeignet. Abweichungen können auf Restwasser, unvollständige Entlüftung, Messunsicherheit oder fehlende Bauteile hinweisen; sie sind keine automatische Leckdiagnose.").foregroundStyle(.secondary)
+                }
+            }.navigationTitle("Füllabgleich")
+                .sheet(isPresented: $adding) { FillCheckEditor(project: project) { check in var copy = project; copy.fillChecks = (copy.fillChecks ?? []) + [check]; return store.upsert(copy) } }
+                .sheet(item: $sourceDraft) { component in ComponentSourceEditor(component: component) { changed in var copy = project; if let index = copy.components.firstIndex(where: { $0.id == changed.id }) { copy.components[index] = changed }; return store.upsert(copy) } }
+                .confirmationDialog("Abgleich endgültig löschen?", isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }), titleVisibility: .visible) {
+                    Button("Löschen", role: .destructive) { if let deleting { var copy = project; copy.fillChecks?.removeAll { $0.id == deleting.id }; store.upsert(copy) }; deleting = nil }
+                }
+        }
+    }
+    private var evidenceReport: String {
+        var lines = ["VolumeCalc – Inventar- und Füllnachweis", project.name, Date().formatted(), "Berechnet \(volumeText(project.calculatedVolumeLiters)) l; Reserve separat \(volumeText(project.reserveLiters)) l", ""]
+        for component in project.components {
+            lines.append("\(component.name) [\(component.kind.title)]: \(volumeText(component.quantity)) × \(volumeText(component.unitVolumeLiters)) l = \(volumeText(component.totalLiters)) l; Quelle: \(component.source ?? "nicht dokumentiert"); \(component.note ?? "")")
+        }
+        for check in project.fillChecks ?? [] {
+            lines.append("\nBefüllung \(check.date.formatted()): Zähler \(volumeText(check.meterStartL)) → \(volumeText(check.meterEndL)) l; abgelassen \(volumeText(check.drainedL)) l; netto \(volumeText(check.netFillL)) l. Inventar-Basis \(volumeText(check.calculatedBaselineL)) l / \(check.componentCount) Bauteile. Differenz \(volumeText(check.deviationL)) l / \(volumeText(check.deviationPercent ?? 0)) %. Projekttoleranz ±\(volumeText(check.tolerancePercent)) %. Anfangs leere Anlage bestätigt. \(check.note)")
+        }
+        lines.append("Die Inventar-Basis früherer Befüllungen bleibt unverändert. Projekttoleranz ist keine Normbestätigung; keine Leckdiagnose.")
+        return lines.joined(separator: "\n")
+    }
+}
+
+private struct FillCheckEditor: View {
+    let project: VolumeProject
+    let save: (FillCheck) -> Bool
+    @State private var check = FillCheck()
+    @State private var failed = false
+    @Environment(\.dismiss) private var dismiss
+    private var completed: FillCheck { var copy = check; copy.calculatedBaselineL = project.calculatedVolumeLiters; copy.componentCount = project.components.count; return copy }
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Messung") {
+                    DatePicker("Befüllung", selection: $check.date)
+                    AuditNumber(title: "Zählerstand vor Befüllung", value: $check.meterStartL, unit: "l")
+                    AuditNumber(title: "Zählerstand nach Befüllung", value: $check.meterEndL, unit: "l")
+                    AuditNumber(title: "Währenddessen abgelassen / verworfen", value: $check.drainedL, unit: "l")
+                    AuditNumber(title: "Projekttoleranz ±", value: $check.tolerancePercent, unit: "%")
+                    Toggle("Anlage war anfangs leer; Inventar und Messung umfassen dieselben Anlagenteile", isOn: $check.confirmedEmptySystem)
+                }
+                Section("Dokumentation") {
+                    Text("Inventar-Basis: \(volumeText(project.calculatedVolumeLiters)) l ohne Planungsreserve. Dieser Wert wird mit dem Abgleich gespeichert.")
+                    TextField("Messgerät, Systemgrenzen, Entlüftung …", text: $check.note, axis: .vertical)
+                    if completed.isValid { Text("Netto eingefüllt: \(volumeText(completed.netFillL)) l").font(.title2.bold()) }
+                    else { Text("Zählerende muss über dem Start liegen; Nettofüllung > 0 und Toleranz 0–100 %. Systemgrenzen bestätigen.").foregroundStyle(.red) }
+                }
+            }.navigationTitle("Befüllung erfassen")
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) { Button("Abbrechen") { dismiss() } }
+                    ToolbarItem(placement: .confirmationAction) { Button("Speichern") { if save(completed) { dismiss() } else { failed = true } }.disabled(!completed.isValid) }
+                }.alert("Nicht gespeichert. Speicherplatz prüfen.", isPresented: $failed) {}
+        }.interactiveDismissDisabled().dismissKeyboardToolbar()
+    }
+}
+
+private struct ComponentSourceEditor: View {
+    @State var component: VolumeComponent
+    let save: (VolumeComponent) -> Bool
+    @State private var failed = false
+    @Environment(\.dismiss) private var dismiss
+    var body: some View {
+        NavigationStack {
+            Form {
+                Text(component.name).font(.headline)
+                TextField("Quelle / Datenblatt / Messverfahren", text: Binding(get: { component.source ?? "" }, set: { component.source = $0 }), axis: .vertical)
+                TextField("Notiz / Unsicherheit / Fundstelle", text: Binding(get: { component.note ?? "" }, set: { component.note = $0 }), axis: .vertical)
+                Text("Quellenangaben dokumentieren die Herkunft des Werts. Sie bestätigen nicht automatisch seine Genauigkeit.").foregroundStyle(.secondary)
+            }.navigationTitle("Datengrundlage")
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) { Button("Abbrechen") { dismiss() } }
+                    ToolbarItem(placement: .confirmationAction) { Button("Speichern") { if save(component) { dismiss() } else { failed = true } } }
+                }.alert("Nicht gespeichert. Speicherplatz prüfen.", isPresented: $failed) {}
+        }.interactiveDismissDisabled()
+    }
+}
+
+private struct AuditNumber: View {
+    let title: String
+    @Binding var value: Double
+    let unit: String
+    @State private var text: String
+    init(title: String, value: Binding<Double>, unit: String) {
+        self.title = title; _value = value; self.unit = unit
+        _text = State(initialValue: value.wrappedValue.formatted(.number.grouping(.never)))
+    }
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+            TextField(unit, text: $text).keyboardType(.decimalPad).font(.title3.monospacedDigit())
+                .accessibilityLabel(title + ", " + unit)
+                .onChange(of: text) { _, raw in value = Double(raw.replacingOccurrences(of: Locale.current.decimalSeparator ?? ".", with: ".")) ?? .nan }
+            if !value.isFinite { Text("Gültige Zahl erforderlich").foregroundStyle(.red) }
+        }.padding(.vertical, 4)
     }
 }
