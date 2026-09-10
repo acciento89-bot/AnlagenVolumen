@@ -16,16 +16,18 @@ Speichere Projekte lokal und teile einen Bericht mit Bauteilen, Quellen und Fül
 
 Offline nutzbar, ohne Benutzerkonto.
 
+End User License Agreement (EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+
 ## Review note EN
 
 VolumeCalc now provides an inventory-evidence and complete-fill verification workflow. This is distinct from generic volume calculators and from our pipe pressure-loss, room-capacity, air-commissioning and refrigeration-service products.
 
 The new Füllabgleich tab groups the inventory by component type, lets users document each component's source and records complete fills from meter start/end readings minus drained water. Each record freezes its own calculated inventory baseline; later edits and planning reserves do not rewrite measured history. A report includes original inputs, evidence and differences.
 
-Steps: add a water-filled component in Inventar, then open Füllabgleich. Tap a component to document its data source. Choose Füllabgleich erfassen, enter meter readings and confirm an initially empty system with matching boundaries. Save and review the discrepancy; relaunch to verify persistence. Share the inventory/fill report from Übergabe. No account is required.
+Steps: add a water-filled component in Inventory (Inventar), then open Fill verification (Füllabgleich). Tap a component to document its data source. Choose Record complete fill (Füllabgleich erfassen), enter meter readings and confirm an initially empty system with matching boundaries. Save (Speichern) and review the discrepancy; relaunch to verify persistence. Share the inventory/fill report from Handover (Übergabe). No account is required.
 
 Existing saved projects migrate without losing component data. Typography and numeric fields were enlarged, and dense inventory rows stack vertically at accessibility text sizes. The contradictory forced dark/light appearance was corrected.
 
 ## Release state
 
-Use these metadata only with the new signed build 5. The original rejected build does not contain the new workflow. See CI and VALIDATION.md for actual verification results. Signed upload requires the existing Apple Developer signing environment; no signing credential has been created or changed.
+Use these metadata only with the new signed build 5. The original rejected build does not contain the new workflow. Core tests, Android tests, Debug/unsigned Release builds and both persisted device workflows passed in CI run 31. See [VALIDATION.md](VALIDATION.md) for the tested commit and limits. Signed upload requires the existing Apple Developer signing environment; no signing credential has been created or changed.
