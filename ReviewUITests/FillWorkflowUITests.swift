@@ -2,9 +2,11 @@ import XCTest
 
 final class FillWorkflowUITests: XCTestCase {
     private func capture(_ app: XCUIApplication, _ name: String) {
+        Thread.sleep(forTimeInterval: 1)
         let image = XCTAttachment(screenshot: app.screenshot()); image.name = name; image.lifetime = .keepAlways; add(image)
     }
     func testInventoryAndFillAuditPresentation() {
+        continueAfterFailure = false
         let app = XCUIApplication()
         app.launchArguments = ["-AppleLanguages", "(de)", "-AppleLocale", "de_DE"]
         app.launch()
@@ -31,7 +33,9 @@ final class FillWorkflowUITests: XCTestCase {
         end.tap(); end.typeText("10")
         let confirmation = app.switches["Anlage war anfangs leer; Inventar und Messung umfassen dieselben Anlagenteile"]
         for _ in 0..<5 where !confirmation.isHittable { app.swipeUp() }
-        confirmation.tap()
+        // SwiftUI exposes the complete labelled row as a switch; hit the actual control.
+        confirmation.coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
+        XCTAssertEqual(confirmation.value as? String, "1")
         XCTAssertTrue(app.buttons["Speichern"].isEnabled)
         capture(app, "03-fill-editor")
         app.buttons["Speichern"].tap()
