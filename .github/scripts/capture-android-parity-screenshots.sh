@@ -5,26 +5,31 @@ readonly package_name="de.kamilunavo.volumecalc"
 readonly output_dir="$GITHUB_WORKSPACE/android/parity-screenshots"
 readonly apk_path="$GITHUB_WORKSPACE/android/app/build/outputs/apk/debug/app-debug.apk"
 
+current_focus() {
+  adb shell dumpsys window | grep -E "mCurrentFocus|mFocusedApp" || true
+}
+
 wait_for_foreground() {
   local attempt
+  local focus
   for attempt in $(seq 1 30); do
-    if adb shell dumpsys window |
-      grep -E "mCurrentFocus|mFocusedApp" |
-      grep -Fq "$package_name"; then
+    focus="$(current_focus)"
+    if [[ "$focus" == *"$package_name"* ]]; then
       return 0
     fi
     sleep 1
   done
   echo 'Timed out waiting for VolumeCalc to become the foreground app.' >&2
-  adb shell dumpsys window |
-    grep -E "mCurrentFocus|mFocusedApp" >&2 || true
+  current_focus >&2
   return 1
 }
 
 assert_app_foreground() {
-  if ! adb shell dumpsys window | grep -E "mCurrentFocus|mFocusedApp" | grep -Fq "$package_name"; then
+  local focus
+  focus="$(current_focus)"
+  if [[ "$focus" != *"$package_name"* ]]; then
     echo 'VolumeCalc is not the foreground app; refusing to capture a misleading screenshot.' >&2
-    adb shell dumpsys window | grep -E "mCurrentFocus|mFocusedApp" >&2 || true
+    printf '%s\n' "$focus" >&2
     return 1
   fi
 }
