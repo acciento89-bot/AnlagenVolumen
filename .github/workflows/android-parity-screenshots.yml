@@ -5,6 +5,7 @@ on:
     branches: [main, fix/android-ios-parity-20260913]
     paths:
       - 'android/**'
+      - '!android/store/google-play/screenshots/**'
       - '.github/workflows/android-parity-screenshots.yml'
   pull_request:
     paths:
@@ -13,7 +14,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   screenshots:
@@ -52,3 +53,20 @@ jobs:
           path: android/parity-screenshots/*.png
           if-no-files-found: error
           retention-days: 30
+
+      - name: Persist authentic screenshots
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          set -euo pipefail
+          target='android/store/google-play/screenshots/de-DE'
+          mkdir -p "$target"
+          rm -f "$target"/*.png
+          cp android/parity-screenshots/*.png "$target"/
+          git config user.name 'Kamilunavo Release Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add "$target"
+          if ! git diff --cached --quiet; then
+            git commit -m 'Persist authentic VolumeCalc Android screenshots'
+            git push origin HEAD:main
+          fi
