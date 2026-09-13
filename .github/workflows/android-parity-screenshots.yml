@@ -1,0 +1,58 @@
+name: VolumeCalc Android parity screenshots
+
+on:
+  push:
+    branches: [fix/android-ios-parity-20260913]
+    paths:
+      - 'android/**'
+      - '.github/workflows/android-parity-screenshots.yml'
+  pull_request:
+    paths:
+      - 'android/**'
+      - '.github/workflows/android-parity-screenshots.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.5.0'
+      - name: Build debug APK
+        run: gradle -p android --no-daemon assembleDebug --stacktrace
+      - name: Capture exact tested UI
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          profile: pixel_7
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          disable-animations: true
+          script: |
+            mkdir -p "$GITHUB_WORKSPACE/android/parity-screenshots"
+            adb install -r "$GITHUB_WORKSPACE/android/app/build/outputs/apk/debug/app-debug.apk"
+            adb shell am force-stop de.kamilunavo.volumecalc
+            adb shell am start -W -n de.kamilunavo.volumecalc/.MainActivity --ez de.kamilunavo.volumecalc.STORE_SCREENSHOTS true
+            sleep 3
+            adb exec-out screencap -p > "$GITHUB_WORKSPACE/android/parity-screenshots/01-inventory.png"
+            adb shell input tap 810 2180
+            sleep 2
+            adb exec-out screencap -p > "$GITHUB_WORKSPACE/android/parity-screenshots/02-fill-audit.png"
+            test "$(sha256sum "$GITHUB_WORKSPACE"/android/parity-screenshots/*.png | cut -d' ' -f1 | sort -u | wc -l | tr -d ' ')" -eq 2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: volumecalc-real-android-screenshots
+          path: android/parity-screenshots/*.png
+          if-no-files-found: error
+          retention-days: 30
