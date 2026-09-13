@@ -8,7 +8,7 @@ readonly apk_path="$GITHUB_WORKSPACE/android/app/build/outputs/apk/debug/app-deb
 wait_for_foreground() {
   local attempt
   for attempt in $(seq 1 30); do
-    if adb shell dumpsys window windows |
+    if adb shell dumpsys window |
       grep -E "mCurrentFocus|mFocusedApp" |
       grep -Fq "$package_name"; then
       return 0
@@ -16,15 +16,15 @@ wait_for_foreground() {
     sleep 1
   done
   echo 'Timed out waiting for VolumeCalc to become the foreground app.' >&2
-  adb shell dumpsys window windows |
+  adb shell dumpsys window |
     grep -E "mCurrentFocus|mFocusedApp" >&2 || true
   return 1
 }
 
 assert_app_foreground() {
-  if ! adb shell dumpsys window windows | grep -E "mCurrentFocus|mFocusedApp" | grep -Fq "$package_name"; then
+  if ! adb shell dumpsys window | grep -E "mCurrentFocus|mFocusedApp" | grep -Fq "$package_name"; then
     echo 'VolumeCalc is not the foreground app; refusing to capture a misleading screenshot.' >&2
-    adb shell dumpsys window windows | grep -E "mCurrentFocus|mFocusedApp" >&2 || true
+    adb shell dumpsys window | grep -E "mCurrentFocus|mFocusedApp" >&2 || true
     return 1
   fi
 }
