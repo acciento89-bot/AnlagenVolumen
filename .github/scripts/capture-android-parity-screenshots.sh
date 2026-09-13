@@ -6,7 +6,7 @@ readonly output_dir="$GITHUB_WORKSPACE/android/parity-screenshots"
 readonly apk_path="$GITHUB_WORKSPACE/android/app/build/outputs/apk/debug/app-debug.apk"
 
 current_focus() {
-  adb shell dumpsys window | grep -E "mCurrentFocus|mFocusedApp" || true
+  adb shell dumpsys window | grep -E "mCurrentFocus=" || true
 }
 
 wait_for_foreground() {
@@ -24,6 +24,20 @@ wait_for_foreground() {
   return 1
 }
 
+wait_for_text() {
+  local expected="$1"
+  local attempt
+  for attempt in $(seq 1 30); do
+    adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
+    if adb shell cat /sdcard/window.xml 2>/dev/null | grep -Fq "$expected"; then
+      return 0
+    fi
+    sleep 1
+  done
+  echo "Timed out waiting for real app UI: $expected" >&2
+  return 1
+}
+
 assert_app_foreground() {
   local focus
   focus="$(current_focus)"
@@ -36,16 +50,17 @@ assert_app_foreground() {
 
 mkdir -p "$output_dir"
 adb install -r "$apk_path"
+adb shell settings put global hide_error_dialogs 1
 adb shell am force-stop "$package_name"
-adb shell am start -n "$package_name/.MainActivity" --ez "$package_name.STORE_SCREENSHOTS" true
+adb shell am start -W -n "$package_name/.MainActivity" --ez "$package_name.STORE_SCREENSHOTS" true
 
 wait_for_foreground
-sleep 8
+wait_for_text 'ANLAGENINVENTAR'
 assert_app_foreground
 adb exec-out screencap -p > "$output_dir/01-inventory.png"
 
 adb shell input tap 810 2180
-sleep 3
+wait_for_text 'VOLUMEN NACHWEISEN'
 assert_app_foreground
 adb exec-out screencap -p > "$output_dir/02-fill-audit.png"
 
