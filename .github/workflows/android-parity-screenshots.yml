@@ -6,10 +6,12 @@ on:
     paths:
       - 'android/**'
       - '!android/store/google-play/screenshots/**'
+      - '.github/scripts/**'
       - '.github/workflows/android-parity-screenshots.yml'
   pull_request:
     paths:
       - 'android/**'
+      - '.github/scripts/**'
       - '.github/workflows/android-parity-screenshots.yml'
   workflow_dispatch:
 
@@ -30,6 +32,8 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.5.0'
+      - name: Validate capture contract
+        run: bash .github/scripts/test-capture-android-parity-screenshots.sh
       - name: Build debug APK
         run: gradle -p android --no-daemon assembleDebug --stacktrace
 
