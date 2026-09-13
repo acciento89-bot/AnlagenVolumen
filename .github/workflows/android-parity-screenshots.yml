@@ -40,18 +40,16 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
           script: |
-            set -eu
-            out="$GITHUB_WORKSPACE/android/parity-screenshots"
-            mkdir -p "$out"
+            mkdir -p "$GITHUB_WORKSPACE/android/parity-screenshots"
             adb install -r "$GITHUB_WORKSPACE/android/app/build/outputs/apk/debug/app-debug.apk"
             adb shell am force-stop de.kamilunavo.volumecalc
             adb shell am start -W -n de.kamilunavo.volumecalc/.MainActivity --ez de.kamilunavo.volumecalc.STORE_SCREENSHOTS true
             sleep 3
-            adb exec-out screencap -p > "$out/01-inventory.png"
+            adb exec-out screencap -p > "$GITHUB_WORKSPACE/android/parity-screenshots/01-inventory.png"
             adb shell input tap 810 2180
             sleep 2
-            adb exec-out screencap -p > "$out/02-fill-audit.png"
-            test "$(sha256sum "$out"/*.png | cut -d' ' -f1 | sort -u | wc -l | tr -d ' ')" -eq 2
+            adb exec-out screencap -p > "$GITHUB_WORKSPACE/android/parity-screenshots/02-fill-audit.png"
+            test "$(sha256sum "$GITHUB_WORKSPACE"/android/parity-screenshots/*.png | cut -d' ' -f1 | sort -u | wc -l | tr -d ' ')" -eq 2
       - uses: actions/upload-artifact@v4
         with:
           name: volumecalc-real-android-screenshots
