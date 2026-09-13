@@ -2,35 +2,30 @@ package de.kamilunavo.volumecalc
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color as AndroidColor
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import org.json.JSONArray
 import org.json.JSONObject
-import java.util.Locale
 import java.util.UUID
+import kotlin.math.abs
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.light(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.light(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT),
+        )
         val repository = ProjectRepository(this)
         setContent {
             VolumeCalcApp(
                 repository = repository,
-                onShare = ::share
+                onShare = ::share,
             )
         }
     }
@@ -44,29 +39,60 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-internal val Accent = Color(0xFF2ED1B3)
-internal val Bg1 = Color(0xFF03101A)
-internal val Bg2 = Color(0xFF07353B)
-internal val Panel = Color(0x12FFFFFF)
-internal val Muted = Color.White.copy(alpha = 0.66f)
-internal val OnAccent = Color(0xFF06221F)
+// Mirrors the light ledger-style SwiftUI theme.
+internal val Accent = Color(0xFF1F614F)
+internal val Accent2 = Color(0xFF3D8F70)
+internal val Bg1 = Color(0xFFF5F1E6)
+internal val Bg2 = Color(0xFFFBF9F1)
+internal val Panel = Color(0xFFFDFBF5)
+internal val CardSurface = Color(0xFFFFFEFA)
+internal val Ink = Color(0xFF1F2621)
+internal val Muted = Color(0xFF616B63)
+internal val Line = Color(0x222E4738)
+internal val OnAccent = Color.White
 
 internal data class UiItem(
     val id: String = UUID.randomUUID().toString(),
     val name: String,
     val liters: Double,
     val kind: String,
-    val source: String? = null
+    val source: String? = null,
+    val note: String? = null,
 )
+
+internal data class FillCheck(
+    val id: String = UUID.randomUUID().toString(),
+    val timestamp: Long = System.currentTimeMillis(),
+    val meterStartL: Double = 0.0,
+    val meterEndL: Double = 0.0,
+    val drainedL: Double = 0.0,
+    val tolerancePercent: Double = 5.0,
+    val confirmedEmptySystem: Boolean = false,
+    val calculatedBaselineL: Double = 0.0,
+    val componentCount: Int = 0,
+    val note: String = "",
+) {
+    val netFillL: Double get() = meterEndL - meterStartL - drainedL
+    val deviationL: Double get() = netFillL - calculatedBaselineL
+    val deviationPercent: Double?
+        get() = calculatedBaselineL.takeIf { it > 0.0 }?.let { deviationL / it * 100.0 }
+    val isWithinTolerance: Boolean
+        get() = deviationPercent?.let { abs(it) <= tolerancePercent } == true
+    val isValid: Boolean
+        get() = meterEndL > meterStartL && netFillL > 0.0 && tolerancePercent in 0.0..100.0 && confirmedEmptySystem
+}
 
 internal data class UiProject(
     val id: String = UUID.randomUUID().toString(),
     val name: String = "Neue Anlage",
     val reservePercent: Double = 5.0,
-    val items: List<UiItem> = emptyList()
+    val items: List<UiItem> = emptyList(),
+    val fillChecks: List<FillCheck> = emptyList(),
 ) {
     val calculatedVolumeLiters: Double get() = items.sumOf { it.liters }
-    val planningVolumeLiters: Double get() = calculatedVolumeLiters * (1.0 + reservePercent / 100.0)
+    val reserveLiters: Double get() = calculatedVolumeLiters * reservePercent / 100.0
+    val planningVolumeLiters: Double get() = calculatedVolumeLiters + reserveLiters
+    val undocumentedItems: List<UiItem> get() = items.filter { it.source.isNullOrBlank() }
 }
 
 internal class ProjectRepository(context: Context) {
@@ -89,7 +115,28 @@ internal class ProjectRepository(context: Context) {
                                     name = item.optString("name", "Bauteil"),
                                     liters = item.optDouble("liters", 0.0).coerceAtLeast(0.0),
                                     kind = item.optString("kind", "Sonstiges"),
-                                    source = item.optString("source").takeIf { it.isNotBlank() }
+                                    source = item.optString("source").takeIf { it.isNotBlank() },
+                                    note = item.optString("note").takeIf { it.isNotBlank() },
+                                )
+                            )
+                        }
+                    }
+                    val checksArray = obj.optJSONArray("fillChecks") ?: JSONArray()
+                    val checks = buildList {
+                        for (j in 0 until checksArray.length()) {
+                            val check = checksArray.getJSONObject(j)
+                            add(
+                                FillCheck(
+                                    id = check.optString("id", UUID.randomUUID().toString()),
+                                    timestamp = check.optLong("timestamp", System.currentTimeMillis()),
+                                    meterStartL = check.optDouble("meterStartL", 0.0),
+                                    meterEndL = check.optDouble("meterEndL", 0.0),
+                                    drainedL = check.optDouble("drainedL", 0.0),
+                                    tolerancePercent = check.optDouble("tolerancePercent", 5.0),
+                                    confirmedEmptySystem = check.optBoolean("confirmedEmptySystem", false),
+                                    calculatedBaselineL = check.optDouble("calculatedBaselineL", 0.0),
+                                    componentCount = check.optInt("componentCount", 0),
+                                    note = check.optString("note", ""),
                                 )
                             )
                         }
@@ -99,7 +146,8 @@ internal class ProjectRepository(context: Context) {
                             id = obj.optString("id", UUID.randomUUID().toString()),
                             name = obj.optString("name", "Neue Anlage"),
                             reservePercent = obj.optDouble("reservePercent", 5.0).coerceAtLeast(0.0),
-                            items = projectItems
+                            items = projectItems,
+                            fillChecks = checks,
                         )
                     )
                 }
@@ -119,6 +167,23 @@ internal class ProjectRepository(context: Context) {
                         .put("liters", item.liters)
                         .put("kind", item.kind)
                         .put("source", item.source ?: "")
+                        .put("note", item.note ?: "")
+                )
+            }
+            val checks = JSONArray()
+            project.fillChecks.forEach { check ->
+                checks.put(
+                    JSONObject()
+                        .put("id", check.id)
+                        .put("timestamp", check.timestamp)
+                        .put("meterStartL", check.meterStartL)
+                        .put("meterEndL", check.meterEndL)
+                        .put("drainedL", check.drainedL)
+                        .put("tolerancePercent", check.tolerancePercent)
+                        .put("confirmedEmptySystem", check.confirmedEmptySystem)
+                        .put("calculatedBaselineL", check.calculatedBaselineL)
+                        .put("componentCount", check.componentCount)
+                        .put("note", check.note)
                 )
             }
             array.put(
@@ -127,6 +192,7 @@ internal class ProjectRepository(context: Context) {
                     .put("name", project.name)
                     .put("reservePercent", project.reservePercent)
                     .put("items", items)
+                    .put("fillChecks", checks)
             )
         }
         prefs.edit().putString("projects", array.toString()).apply()
