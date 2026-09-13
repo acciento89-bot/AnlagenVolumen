@@ -4,8 +4,7 @@
         android:allowBackup="false"
         android:label="VolumeCalc"
         android:theme="@style/AppTheme"
-        android:icon="@drawable/ic_launcher"
-        android:roundIcon="@drawable/ic_launcher">
+        android:icon="@drawable/ic_launcher">
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

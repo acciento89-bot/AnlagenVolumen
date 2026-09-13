@@ -42,17 +42,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          LAUNCHER='android/app/src/main/res/drawable/ic_launcher.xml'
-          PLAY='android/store/google-play/icon.svg'
-          for token in '#071D23' '#2ED1B5'; do
-            grep -Fq "$token" "$LAUNCHER"
-            grep -Fq "$token" "$PLAY"
-          done
-          grep -Fq 'M54,15C37,15 23,29 23,46' "$LAUNCHER"
-          grep -Fq 'M54 15C37 15 23 29 23 46' "$PLAY"
+          IOS_ICON='AnlagenVolumen/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png'
+          LAUNCHER='android/app/src/main/res/drawable-nodpi/ic_launcher.png'
+          test -s "$IOS_ICON"
+          test -s "$LAUNCHER"
+          cmp -s "$IOS_ICON" "$LAUNCHER"
           grep -Fq 'android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher' android/app/src/main/res/values-v31/styles.xml
           grep -Fq 'android:icon="@drawable/ic_launcher"' android/app/src/main/AndroidManifest.xml
-          grep -Fq 'android:roundIcon="@drawable/ic_launcher"' android/app/src/main/AndroidManifest.xml
+          ! grep -Fq 'android:roundIcon=' android/app/src/main/AndroidManifest.xml
+          test -z "$(find android/app/src/main/res -type f \( -path '*/mipmap-anydpi*' -o -iname '*adaptive*' -o -iname '*foreground*' -o -iname '*background*' \) -print -quit)"
           grep -Fq 'versionCode = 3' android/app/build.gradle.kts
           grep -Fq 'versionName = "1.0.1"' android/app/build.gradle.kts
       - run: gradle -p android testDebugUnitTest
