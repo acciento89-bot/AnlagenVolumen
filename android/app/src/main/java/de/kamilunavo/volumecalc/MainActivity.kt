@@ -22,6 +22,9 @@ class MainActivity : ComponentActivity() {
             navigationBarStyle = SystemBarStyle.light(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT),
         )
         val repository = ProjectRepository(this)
+        val screenshotMode = BuildConfig.DEBUG &&
+            intent.getBooleanExtra("de.kamilunavo.volumecalc.STORE_SCREENSHOTS", false)
+        if (screenshotMode) repository.seedStoreScreenshotData()
         setContent {
             VolumeCalcApp(
                 repository = repository,
@@ -196,5 +199,28 @@ internal class ProjectRepository(context: Context) {
             )
         }
         prefs.edit().putString("projects", array.toString()).apply()
+    }
+
+    fun seedStoreScreenshotData() {
+        val items = listOf(
+            UiItem("demo-pipe", "Heizkreis EG · Rohr", 38.6, "Rohr", "Herstellerdaten / Rohrdimension"),
+            UiItem("demo-radiators", "Heizkörper Wohnbereich", 46.0, "Heizkörper", "Typenübersicht Bestand"),
+            UiItem("demo-buffer", "Pufferspeicher", 100.0, "Speicher", "Typenschild 100 l"),
+            UiItem("demo-boiler", "Wärmeerzeuger", 8.5, "Wärmeerzeuger", "Technisches Datenblatt"),
+        )
+        val baseline = items.sumOf { it.liters }
+        val check = FillCheck(
+            id = "demo-fill",
+            timestamp = 1_789_223_400_000L,
+            meterStartL = 1240.0,
+            meterEndL = 1435.2,
+            drainedL = 1.1,
+            tolerancePercent = 5.0,
+            confirmedEmptySystem = true,
+            calculatedBaselineL = baseline,
+            componentCount = items.size,
+            note = "Füllwasserzähler · Anlage vollständig entlüftet",
+        )
+        save(listOf(UiProject(id = "demo-project", name = "Mehrfamilienhaus Musterstraße", reservePercent = 5.0, items = items, fillChecks = listOf(check))))
     }
 }
