@@ -27,9 +27,10 @@ jobs:
           java-version: '17'
       - uses: android-actions/setup-android@v3
       - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.5.0'
       - name: Build debug APK
-        working-directory: android
-        run: ./gradlew --no-daemon :app:assembleDebug
+        run: gradle -p android --no-daemon assembleDebug --stacktrace
       - name: Capture exact tested UI
         uses: reactivecircus/android-emulator-runner@v2
         with:
