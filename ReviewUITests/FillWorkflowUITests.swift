@@ -37,7 +37,11 @@ final class FillWorkflowUITests: XCTestCase {
         capture(app, "03-before-system-boundary-confirmation")
         let hierarchy = XCTAttachment(string: app.debugDescription)
         hierarchy.name = "fill-confirmation-hierarchy"; hierarchy.lifetime = .keepAlways; add(hierarchy)
-        confirmation.tap()
+        // SwiftUI exposes a labelled accessibility row AND the actual UISwitch.
+        // Activate the native child, whose observed bounds differ from the row.
+        let nativeSwitch = confirmation.switches.firstMatch
+        XCTAssertTrue(nativeSwitch.waitForExistence(timeout: 5))
+        nativeSwitch.tap()
         let enabled = XCTNSPredicateExpectation(predicate: NSPredicate(format: "value == %@", "1"), object: confirmation)
         XCTAssertEqual(XCTWaiter.wait(for: [enabled], timeout: 5), .completed)
         XCTAssertEqual(confirmation.value as? String, "1")
