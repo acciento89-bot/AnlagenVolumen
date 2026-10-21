@@ -68,6 +68,7 @@ public struct VolumeProject: Identifiable, Codable, Equatable, Sendable {
     public var reservePercent: Double
     public var components: [VolumeComponent]
     public var fillChecks: [FillCheck]? = nil
+    public var alternatives: [VolumeAlternative]? = nil
 
     public init(
         id: UUID = UUID(),

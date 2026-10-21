@@ -7,3 +7,5 @@
 5. Verify actual store versions before meaningful versioning; prepare accurate DE/EN ASO and genuine screenshots; signed delivery within published-app scope. Leave unpublished Apple apps and existing pending submissions protected.
 
 Ruling: use this dedicated clean repository on isolated feature branch instead of the chat worktree tool, which cannot select a separate repository. Base4bd299297f03b90c336d49f891f93f5492257fa2 confirmed origin/main. No native execution while root's ArbeitsKlar XCTest owns the device.
+
+Task1core2026-10-21: initialswift testactuallyREDmissingVolumeAlternative/optionalprojectfield. Addedvalue-snapshotmodel, finite/unique-IDvalidation, stable-IDdiff, stale-baselinecheck, separatewater/reserve/planningdeltas andDE/ENcomparisondocument. FirstGREENbuildcaughtMac12availabilityofLocale.language; keptoldercorehostcompatibilitywithavailabilityfallback. Fullswift testGREEN18tests0fail(including5newalternativecases). NoUI/persistenceintegration/nativeclaimyet.
