@@ -6,6 +6,7 @@ struct ContentView: View {
         TabView {
             InventoryView().tabItem { Label("Inventar", systemImage: "shippingbox") }
             FillAuditView().tabItem { Label("Füllabgleich", systemImage: "drop.halffull") }
+            DesignAlternativesView().tabItem { Label("Varianten", systemImage: "arrow.triangle.branch") }
         }.tint(AppTheme.accent).preferredColorScheme(.light)
             .alert("Projektdaten", isPresented: Binding(get: { store.error != nil }, set: { if !$0 { store.error = nil } })) { Button("OK") { store.error = nil } } message: { Text(store.error ?? "") }
     }

@@ -91,6 +91,7 @@ internal data class UiProject(
     val reservePercent: Double = 5.0,
     val items: List<UiItem> = emptyList(),
     val fillChecks: List<FillCheck> = emptyList(),
+    val alternatives: List<DesignAlternative> = emptyList(),
 ) {
     val calculatedVolumeLiters: Double get() = items.sumOf { it.liters }
     val reserveLiters: Double get() = calculatedVolumeLiters * reservePercent / 100.0
@@ -100,8 +101,12 @@ internal data class UiProject(
 
 internal class ProjectRepository(context: Context) {
     private val prefs = context.getSharedPreferences("volumecalc", Context.MODE_PRIVATE)
+    var loadError: String? = null
+        private set
+    private var loaded = false
 
     fun load(): List<UiProject> {
+        loaded = true
         val raw = prefs.getString("projects", null) ?: return listOf(UiProject())
         return runCatching {
             val array = JSONArray(raw)
@@ -151,14 +156,28 @@ internal class ProjectRepository(context: Context) {
                             reservePercent = obj.optDouble("reservePercent", 5.0).coerceAtLeast(0.0),
                             items = projectItems,
                             fillChecks = checks,
+                            alternatives = (if (!obj.has("alternatives") || obj.isNull("alternatives")) null else obj.getJSONArray("alternatives"))?.let { entries ->
+                                List(entries.length()) { AlternativeJson.decode(entries.getJSONObject(it)) }
+                            } ?: emptyList(),
                         )
                     )
                 }
-            }.ifEmpty { listOf(UiProject()) }
-        }.getOrElse { listOf(UiProject()) }
+            }.also { require(validAlternatives(it)) }.ifEmpty { listOf(UiProject()) }
+        }.onSuccess { loadError = null }.getOrElse {
+            loadError = "Gespeicherte Daten konnten nicht gelesen werden. Original bleibt geschützt."
+            listOf(UiProject())
+        }
     }
 
-    fun save(projects: List<UiProject>) {
+    private fun validAlternatives(projects: List<UiProject>) = projects.all { project ->
+        project.alternatives.map { it.id }.toSet().size == project.alternatives.size &&
+            project.alternatives.all { it.valid && it.baselineProjectId == project.id }
+    }
+
+    fun save(projects: List<UiProject>): Boolean {
+        if (!loaded) load()
+        if (loadError != null || !validAlternatives(projects)) return false
+        return runCatching {
         val array = JSONArray()
         projects.forEach { project ->
             val items = JSONArray()
@@ -196,9 +215,11 @@ internal class ProjectRepository(context: Context) {
                     .put("reservePercent", project.reservePercent)
                     .put("items", items)
                     .put("fillChecks", checks)
+                    .put("alternatives", JSONArray().apply { project.alternatives.forEach { put(AlternativeJson.encode(it)) } })
             )
         }
-        prefs.edit().putString("projects", array.toString()).apply()
+        prefs.edit().putString("projects", array.toString()).commit()
+        }.getOrDefault(false)
     }
 
     fun seedStoreScreenshotData() {

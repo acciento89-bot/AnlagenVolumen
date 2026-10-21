@@ -6,3 +6,6 @@ xcuserdata/
 .gradle/
 android/local.properties
 android/app/build/
+
+# Disposable native QA project generated from review-project.yml
+VolumeCalcReview.xcodeproj/

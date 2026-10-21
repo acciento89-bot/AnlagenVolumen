@@ -33,8 +33,17 @@ final class FillWorkflowUITests: XCTestCase {
         end.tap(); end.typeText("10")
         let confirmation = app.switches["Anlage war anfangs leer; Inventar und Messung umfassen dieselben Anlagenteile"]
         for _ in 0..<5 where !confirmation.isHittable { app.swipeUp() }
-        // SwiftUI exposes the complete labelled row as a switch; hit the actual control.
-        confirmation.coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
+        // Ask XCTest to activate the switch; the labelled row has different widths in tablet sheets.
+        capture(app, "03-before-system-boundary-confirmation")
+        let hierarchy = XCTAttachment(string: app.debugDescription)
+        hierarchy.name = "fill-confirmation-hierarchy"; hierarchy.lifetime = .keepAlways; add(hierarchy)
+        // SwiftUI exposes a labelled accessibility row AND the actual UISwitch.
+        // Activate the native child, whose observed bounds differ from the row.
+        let nativeSwitch = confirmation.switches.firstMatch
+        XCTAssertTrue(nativeSwitch.waitForExistence(timeout: 5))
+        nativeSwitch.tap()
+        let enabled = XCTNSPredicateExpectation(predicate: NSPredicate(format: "value == %@", "1"), object: confirmation)
+        XCTAssertEqual(XCTWaiter.wait(for: [enabled], timeout: 5), .completed)
         XCTAssertEqual(confirmation.value as? String, "1")
         XCTAssertTrue(app.buttons["Speichern"].isEnabled)
         capture(app, "03-fill-editor")

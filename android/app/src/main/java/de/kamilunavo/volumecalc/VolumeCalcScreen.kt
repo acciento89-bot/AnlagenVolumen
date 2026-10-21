@@ -41,6 +41,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,38 +61,43 @@ internal fun VolumeCalcApp(
     onShare: (String) -> Unit,
 ) {
     var projects by remember { mutableStateOf(repository.load()) }
-    var selectedProjectId by remember { mutableStateOf(projects.first().id) }
-    var selectedTab by remember { mutableIntStateOf(0) }
+    var selectedProjectId by rememberSaveable { mutableStateOf(projects.first().id) }
+    var selectedTab by rememberSaveable { mutableIntStateOf(0) }
     var showAdd by remember { mutableStateOf(false) }
     var showProjects by remember { mutableStateOf(false) }
     var showSettings by remember { mutableStateOf(false) }
     var showFillAudit by remember { mutableStateOf(false) }
 
+    var saveError by remember { mutableStateOf(repository.loadError != null) }
+
     val project = projects.firstOrNull { it.id == selectedProjectId } ?: projects.first()
 
     fun updateProject(updated: UiProject) {
-        projects = projects.map { if (it.id == updated.id) updated else it }
-        repository.save(projects)
+        val next = projects.map { if (it.id == updated.id) updated else it }
+        if (repository.save(next)) projects = next else saveError = true
     }
 
     fun addProject(name: String) {
         val newProject = UiProject(name = name.ifBlank { "Neue Anlage" })
-        projects = listOf(newProject) + projects
-        selectedProjectId = newProject.id
-        repository.save(projects)
+        val next = listOf(newProject) + projects
+        if (repository.save(next)) { projects = next; selectedProjectId = newProject.id } else saveError = true
     }
 
     fun deleteProject(projectId: String) {
         val remaining = projects.filterNot { it.id == projectId }.ifEmpty { listOf(UiProject()) }
-        projects = remaining
-        if (remaining.none { it.id == selectedProjectId }) selectedProjectId = remaining.first().id
-        repository.save(projects)
+        if (repository.save(remaining)) {
+            projects = remaining
+            if (remaining.none { it.id == selectedProjectId }) selectedProjectId = remaining.first().id
+        } else saveError = true
     }
 
     MaterialTheme(
         colorScheme = lightColorScheme(
             primary = Accent,
             secondary = Accent2,
+            primaryContainer = Accent.copy(alpha=0.12f),
+            secondaryContainer = Accent.copy(alpha=0.12f),
+            onSecondaryContainer = Accent,
             background = Bg1,
             surface = CardSurface,
             onPrimary = Color.White,
@@ -116,6 +122,7 @@ internal fun VolumeCalcApp(
                         icon = { Text("◒", fontSize = 20.sp) },
                         label = { Text("Füllabgleich") },
                     )
+                    NavigationBarItem(selected=selectedTab==2,onClick={selectedTab=2},icon={Text("⇄",fontSize=20.sp)},label={Text(planningText("Varianten","Alternatives"))})
                 }
             },
         ) { scaffoldPadding ->
@@ -135,16 +142,31 @@ internal fun VolumeCalcApp(
                         onDelete = { id -> updateProject(project.copy(items = project.items.filterNot { it.id == id })) },
                         onShare = { onShare(exportText(project)) },
                     )
-                } else {
+                } else if (selectedTab == 1) {
                     FillAuditScreen(
                         project = project,
                         onAddAudit = { showFillAudit = true },
                         onDeleteAudit = { id -> updateProject(project.copy(fillChecks = project.fillChecks.filterNot { it.id == id })) },
                         onShare = { onShare(fillEvidenceText(project)) },
                     )
+                } else {
+                    DesignAlternativesScreen(project,onSave={ alternative ->
+                        val latest=projects.firstOrNull{it.id==alternative.baselineProjectId}
+                        if(latest==null) false else {
+                            val updated=latest.copy(alternatives=latest.alternatives.filterNot{it.id==alternative.id}+alternative)
+                            val next=projects.map{if(it.id==updated.id)updated else it}
+                            if(repository.save(next)){projects=next;true}else false
+                        }
+                    },onDelete={ id ->
+                        val updated=project.copy(alternatives=project.alternatives.filterNot{it.id==id})
+                        val next=projects.map{if(it.id==updated.id)updated else it}
+                        if(repository.save(next)){projects=next;true}else false
+                    },onShare=onShare)
                 }
             }
         }
+
+        if (saveError) androidx.compose.material3.AlertDialog(onDismissRequest={saveError=false},title={Text(planningText("Nicht gespeichert","Not saved"))},text={Text(planningText("Die Originaldaten bleiben erhalten. Speicherplatz und gespeicherte Daten prüfen.","Original data is preserved. Check storage space and saved data."))},confirmButton={TextButton(onClick={saveError=false}){Text("OK")}})
 
         if (showAdd) {
             AddItemDialog(

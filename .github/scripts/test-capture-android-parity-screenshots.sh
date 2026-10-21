@@ -36,3 +36,22 @@ captures = re.findall(
 )
 assert len(captures) == 2, 'each PNG must have an immediately preceding strict capture guard'
 PY
+
+python3 - <<'PY'
+import importlib.util
+from pathlib import Path
+s = importlib.util.spec_from_file_location('node_center', '.github/scripts/android-node-center.py')
+m = importlib.util.module_from_spec(s); s.loader.exec_module(m)
+for bounds, expected in [('[360,2100][720,2280]', (540,2190)), ('[200,800][400,880]', (300,840))]:
+    xml = f'<hierarchy><node text="Inventar" bounds="[0,0][10,10]"/><node text="Füllabgleich" bounds="{bounds}"/><node text="Varianten" bounds="[720,2100][1080,2280]"/></hierarchy>'
+    assert m.center(xml, 'Füllabgleich') == expected
+for xml in ['<hierarchy/>', '<hierarchy><node text="Füllabgleich" bounds="[0,0][0,0]"/></hierarchy>', '<hierarchy><node text="Füllabgleich"/><node text="Füllabgleich"/></hierarchy>']:
+    try:
+        m.center(xml, 'Füllabgleich')
+    except ValueError:
+        continue
+    raise AssertionError('Missing, empty and ambiguous targets must fail closed')
+source = Path('.github/scripts/capture-android-parity-screenshots.sh').read_text()
+assert "tap_text 'Füllabgleich'" in source
+assert 'input tap 810 2180' not in source
+PY
