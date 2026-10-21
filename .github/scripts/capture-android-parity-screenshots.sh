@@ -61,6 +61,17 @@ wait_for_text() {
   return 1
 }
 
+# Resolve the actual accessibility node; tab count and device insets can change.
+tap_text() {
+  local label="$1"
+  local center
+  adb shell uiautomator dump /sdcard/window.xml >/dev/null
+  adb pull /sdcard/window.xml "$output_dir/navigation.xml" >/dev/null
+  center="$(python3 "$GITHUB_WORKSPACE/.github/scripts/android-node-center.py" "$output_dir/navigation.xml" "$label")"
+  read -r x y <<< "$center"
+  adb shell input tap "$x" "$y"
+}
+
 assert_app_foreground() {
   local focus
   focus="$(current_focus)"
@@ -100,7 +111,7 @@ wait_for_text 'ANLAGENINVENTAR'
 assert_capture_safe
 adb exec-out screencap -p > "$output_dir/01-inventory.png"
 
-adb shell input tap 810 2180
+tap_text 'Füllabgleich'
 wait_for_text 'VOLUMEN NACHWEISEN'
 assert_capture_safe
 adb exec-out screencap -p > "$output_dir/02-fill-audit.png"
