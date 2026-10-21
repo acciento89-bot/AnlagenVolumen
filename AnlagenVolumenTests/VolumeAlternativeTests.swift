@@ -2,6 +2,15 @@ import XCTest
 @testable import AnlagenVolumenCore
 
 final class VolumeAlternativeTests: XCTestCase {
+    func testDraftNumberRejectsVisibleBlankAndInvalidValues() {
+        for text in ["", "  ", "NaN", "Infinity", "-1", "1e999", "1,2,3"] {
+            XCTAssertNil(VolumeAlternative.parseDraftNumber(text), text)
+        }
+        XCTAssertEqual(VolumeAlternative.parseDraftNumber(" 1,25 "), 1.25)
+        XCTAssertEqual(VolumeAlternative.parseDraftNumber("1.25"), 1.25)
+        XCTAssertEqual(VolumeAlternative.parseDraftNumber("0"), 0)
+    }
+
     private func sample() -> VolumeProject {
         VolumeProject(name: "Heizkreis", reservePercent: 10, components: [
             VolumeComponent(kind: .buffer, name: "Speicher", quantity: 1, unitVolumeLiters: 100, source: "Typenschild", note: "Herstellerwert"),

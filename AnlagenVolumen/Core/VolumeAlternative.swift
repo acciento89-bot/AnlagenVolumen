@@ -2,6 +2,13 @@ import Foundation
 
 /// A planning scenario owns value snapshots; it never writes back to the actual inventory.
 public struct VolumeAlternative: Identifiable, Codable, Equatable, Sendable {
+    /// Text-backed editing must not silently reuse an old number when a field is cleared.
+    public static func parseDraftNumber(_ text: String) -> Double? {
+        let normalized = text.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: ",", with: ".")
+        guard let value = Double(normalized), value.isFinite, value >= 0 else { return nil }
+        return value
+    }
+
     public var id: UUID = UUID()
     public var name: String
     public let capturedAt: Date

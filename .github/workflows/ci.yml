@@ -52,10 +52,16 @@ jobs:
           grep -Fq 'android:icon="@drawable/ic_launcher"' android/app/src/main/AndroidManifest.xml
           ! grep -Fq 'android:roundIcon=' android/app/src/main/AndroidManifest.xml
           test -z "$(find android/app/src/main/res -type f \( -path '*/mipmap-anydpi*' -o -iname '*adaptive*' -o -iname '*foreground*' -o -iname '*background*' \) -print -quit)"
-          grep -Fq 'versionCode = 3' android/app/build.gradle.kts
-          grep -Fq 'versionName = "1.0.1"' android/app/build.gradle.kts
+          grep -Fq 'versionCode = 5' android/app/build.gradle.kts
+          grep -Fq 'versionName = "1.1.0"' android/app/build.gradle.kts
       - run: gradle -p android testDebugUnitTest
       - run: gradle -p android bundleRelease
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VolumeCalc-1.1.0-5-unsigned-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+          retention-days: 14
 
   review-device-tests:
     runs-on: macos-26

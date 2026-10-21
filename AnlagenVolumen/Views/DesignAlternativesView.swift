@@ -69,13 +69,19 @@ private struct AlternativeEditor: View {
     @Environment(\.locale) private var locale
     @EnvironmentObject private var store: ProjectStore
     @State private var draft: VolumeAlternative
+    @State private var reserveInput: String
     @State private var adding = false
     @State private var component: VolumeComponent?
     @State private var saveFailed = false
     let onSave: (VolumeAlternative) -> Bool
 
     init(alternative: VolumeAlternative, onSave: @escaping (VolumeAlternative) -> Bool) {
-        _draft = State(initialValue: alternative); self.onSave = onSave
+        _draft = State(initialValue: alternative); _reserveInput = State(initialValue: String(alternative.proposedReservePercent)); self.onSave = onSave
+    }
+    private var editedDraft: VolumeAlternative {
+        var value = draft
+        value.proposedReservePercent = VolumeAlternative.parseDraftNumber(reserveInput) ?? .nan
+        return value
     }
     private var actual: VolumeProject? { store.projects.first { $0.id == draft.baselineProjectID } }
     private var proposedProject: VolumeProject {
@@ -93,7 +99,7 @@ private struct AlternativeEditor: View {
                             .foregroundStyle(.orange)
                     }
                 }
-                if let comparison = try? draft.comparison() {
+                if let comparison = try? editedDraft.comparison() {
                     Section("Bestand → Variante") {
                         comparisonRow("Berechneter Wasserinhalt", before: comparison.baselineWaterLiters, after: comparison.proposedWaterLiters)
                         comparisonRow("Reserve", before: comparison.baselineReserveLiters, after: comparison.proposedReserveLiters)
@@ -101,7 +107,7 @@ private struct AlternativeEditor: View {
                     }
                 }
                 Section("Aufbau der Variante") {
-                    NumberField(title: "Planungsreserve", unit: "%", value: $draft.proposedReservePercent)
+                    AlternativeNumberField(title: "Planungsreserve", unit: "%", text: $reserveInput)
                     ForEach(draft.proposedComponents) { item in
                         Button { component = item } label: {
                             HStack {
@@ -117,11 +123,11 @@ private struct AlternativeEditor: View {
                     Button { adding = true } label: { Label("Bauteil hinzufügen", systemImage: "plus") }
                 }
                 Section {
-                    if let report = try? draft.report(locale: locale) {
+                    if let report = try? editedDraft.report(locale: locale) {
                         ShareLink(item: report) { Label("Vergleich teilen", systemImage: "square.and.arrow.up") }
                     }
                     Text("Die Reserve ist ein separater Planungswert. Die Variante ist keine Messung und kein Nachweis eines tatsächlichen Umbaus.").font(.footnote).foregroundStyle(AppTheme.muted)
-                    if !draft.isValid { Text("Bitte einen Namen sowie endliche, nicht negative Mengen, Volumen und Reserve eingeben.").foregroundStyle(.red) }
+                    if !editedDraft.isValid { Text("Bitte einen Namen sowie endliche, nicht negative Mengen, Volumen und Reserve eingeben.").foregroundStyle(.red) }
                     if saveFailed { Text("Nicht gespeichert. Die bisherigen Projektdaten bleiben erhalten.").foregroundStyle(.red) }
                 }
             }
@@ -129,7 +135,7 @@ private struct AlternativeEditor: View {
             .navigationTitle("Variante").navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Abbrechen") { dismiss() } }
-                ToolbarItem(placement: .confirmationAction) { Button("Speichern") { if onSave(draft) { dismiss() } else { saveFailed = true } }.disabled(!draft.isValid || actual == nil) }
+                ToolbarItem(placement: .confirmationAction) { Button("Speichern") { if onSave(editedDraft) { dismiss() } else { saveFailed = true } }.disabled(!editedDraft.isValid || actual == nil) }
             }
             .sheet(isPresented: $adding) {
                 AddComponentView(project: proposedProject) { proposed in draft.proposedComponents = proposed.components }
@@ -156,19 +162,27 @@ private struct AlternativeEditor: View {
 private struct AlternativeComponentEditor: View {
     @Environment(\.dismiss) private var dismiss
     @State private var draft: VolumeComponent
+    @State private var quantityInput: String
+    @State private var unitInput: String
     let onSave: (VolumeComponent) -> Void
     init(component: VolumeComponent, onSave: @escaping (VolumeComponent) -> Void) {
-        _draft = State(initialValue: component); self.onSave = onSave
+        _draft = State(initialValue: component); _quantityInput = State(initialValue: String(component.quantity)); _unitInput = State(initialValue: String(component.unitVolumeLiters)); self.onSave = onSave
+    }
+    private var edited: VolumeComponent {
+        var value = draft
+        value.quantity = VolumeAlternative.parseDraftNumber(quantityInput) ?? .nan
+        value.unitVolumeLiters = VolumeAlternative.parseDraftNumber(unitInput) ?? .nan
+        return value
     }
     private var valid: Bool {
-        draft.quantity.isFinite && draft.quantity >= 0 && draft.unitVolumeLiters.isFinite && draft.unitVolumeLiters >= 0 && draft.totalLiters.isFinite
+        edited.quantity.isFinite && edited.quantity >= 0 && edited.unitVolumeLiters.isFinite && edited.unitVolumeLiters >= 0 && edited.totalLiters.isFinite
     }
     var body: some View {
         NavigationStack {
             Form {
                 TextField("Bezeichnung", text: $draft.name)
-                NumberField(title: "Menge", unit: "", value: $draft.quantity)
-                NumberField(title: "Volumen je Einheit", unit: "l", value: $draft.unitVolumeLiters)
+                AlternativeNumberField(title: "Menge", unit: "", text: $quantityInput)
+                AlternativeNumberField(title: "Volumen je Einheit", unit: "l", text: $unitInput)
                 TextField("Quelle / Herstellerangabe", text: Binding(get: { draft.source ?? "" }, set: { draft.source = $0 }))
                 TextField("Notiz", text: Binding(get: { draft.note ?? "" }, set: { draft.note = $0 }))
                 Text("Prüfe bei geänderten Bauteilen auch die Quelle. Berechnete Werte aus dem Bestand werden nicht automatisch neu dimensioniert.").font(.footnote)
@@ -176,8 +190,27 @@ private struct AlternativeComponentEditor: View {
             .navigationTitle("Bauteil der Variante").navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Abbrechen") { dismiss() } }
-                ToolbarItem(placement: .confirmationAction) { Button("Übernehmen") { onSave(draft); dismiss() }.disabled(!valid) }
+                ToolbarItem(placement: .confirmationAction) { Button("Übernehmen") { onSave(edited); dismiss() }.disabled(!valid) }
             }.dismissKeyboardToolbar()
         }.tint(AppTheme.accent)
+    }
+}
+
+private struct AlternativeNumberField: View {
+    let title: String
+    let unit: String
+    @Binding var text: String
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(LocalizedStringKey(title)).foregroundStyle(AppTheme.ink)
+            HStack {
+                TextField("0", text: $text).keyboardType(.decimalPad)
+                    .font(.title3.monospacedDigit()).padding(10)
+                    .accessibilityLabel(title + ", " + unit)
+                    .background(Color.white, in: RoundedRectangle(cornerRadius: 8))
+                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(VolumeAlternative.parseDraftNumber(text) == nil ? Color.red : AppTheme.line))
+                Text(unit).foregroundStyle(AppTheme.muted)
+            }
+        }
     }
 }
