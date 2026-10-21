@@ -7,8 +7,9 @@ final class ProjectStore: ObservableObject {
     @Published var selectedProjectID: UUID?
     @Published var error: String?
     private var loadFailed = false
+    private let storageOverride: URL?
 
-    init() { load() }
+    init(fileURL: URL? = nil) { storageOverride = fileURL; load() }
 
     var selectedProject: VolumeProject? {
         get {
@@ -29,7 +30,9 @@ final class ProjectStore: ObservableObject {
     @discardableResult func upsert(_ project: VolumeProject) -> Bool {
         guard project.reservePercent.isFinite, project.reservePercent >= 0,
               project.components.allSatisfy({ $0.quantity.isFinite && $0.quantity >= 0 && $0.unitVolumeLiters.isFinite && $0.unitVolumeLiters >= 0 }),
-              (project.fillChecks ?? []).allSatisfy(\.isValid) else {
+              (project.fillChecks ?? []).allSatisfy(\.isValid),
+              (project.alternatives ?? []).allSatisfy({ $0.isValid && $0.baselineProjectID == project.id }),
+              Set((project.alternatives ?? []).map(\.id)).count == (project.alternatives ?? []).count else {
             error = "Nicht gespeichert: Bitte gültige Mengen und Reserven eingeben."
             return false
         }
@@ -49,6 +52,7 @@ final class ProjectStore: ObservableObject {
     }
 
     private var fileURL: URL {
+        if let storageOverride { return storageOverride }
         let base = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         return base.appendingPathComponent("volumecalc-projects.json")
     }

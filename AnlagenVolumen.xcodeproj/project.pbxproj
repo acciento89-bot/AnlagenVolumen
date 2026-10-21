@@ -21,6 +21,9 @@
 		0E4185ABE4A4952D2B51245B /* ProjectSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ED6C2656C8D5BDEAF8C4A39 /* ProjectSettingsView.swift */; };
 		B8AC1D188E57AAA305899A40 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9BB64FD19ED26E8CD21BD076 /* Assets.xcassets */; };
 		01DAFFEDC37C03B37484F014 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B706BFD6500C411ACDBAF51A /* PrivacyInfo.xcprivacy */; };
+		A8479C2CBAF7A9BE9CFF3397 /* VolumeAlternative.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7199BF96C02BA07C29F98DA /* VolumeAlternative.swift */; };
+		46B94429C977583AA5F68EE6 /* DesignAlternativesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD169831DACA489445BAA40 /* DesignAlternativesView.swift */; };
+		AF16828C2026102100000004 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AF16828C2026102100000001; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +43,10 @@
 		9BB64FD19ED26E8CD21BD076 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets.xcassets"; sourceTree = "<group>"; };
 		B706BFD6500C411ACDBAF51A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PrivacyInfo.xcprivacy"; sourceTree = "<group>"; };
 		38A007151ABE87CC01A5B6E9 /* VolumeCalc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VolumeCalc.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F7199BF96C02BA07C29F98DA /* VolumeAlternative.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Core/VolumeAlternative.swift"; sourceTree = "<group>"; };
+		CFD169831DACA489445BAA40 /* DesignAlternativesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/DesignAlternativesView.swift"; sourceTree = "<group>"; };
+		AF16828C2026102100000002 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
+		AF16828C2026102100000003 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,6 +56,9 @@
 /* Begin PBXGroup section */
 		325F10A6957A34D66CB8C0E4 = {isa = PBXGroup; children = (3A2A88DEEFF3D1D23E496597 /* AnlagenVolumen */, BFE00B156DCFC34C4751A6E5 /* Products */); sourceTree = "<group>"; };
 		3A2A88DEEFF3D1D23E496597 /* AnlagenVolumen */ = {isa = PBXGroup; children = (
+				AF16828C2026102100000001 /* Localizable.strings */,
+				CFD169831DACA489445BAA40 /* DesignAlternativesView.swift */,
+				F7199BF96C02BA07C29F98DA /* VolumeAlternative.swift */,
 				4C3B71B504672EDAAAFB5E75 /* VolumeCalcApp.swift */,
 				A5C7CA3AAA59DBED958D0315 /* ContentView.swift */,
 				4C6410623486B52392DDCC2E /* DesignSystem.swift */,
@@ -72,12 +82,17 @@
 		0E8A3AD980EC179856012B7E /* VolumeCalc */ = {isa = PBXNativeTarget; buildConfigurationList = 8A7B4673EE7E4581B91FBC4C; buildPhases = (60C4A7BCE9558CB20D9ADDCB /* Sources */, D1897DBBE7DC4EBFD5751F23 /* Frameworks */, 6AC696A880E335123309EDD3 /* Resources */); buildRules = (); dependencies = (); name = VolumeCalc; productName = VolumeCalc; productReference = 38A007151ABE87CC01A5B6E9; productType = "com.apple.product-type.application"; };
 /* End PBXNativeTarget section */
 
+/* Begin PBXVariantGroup section */
+		AF16828C2026102100000001 /* Localizable.strings */ = {isa = PBXVariantGroup; children = (AF16828C2026102100000002, AF16828C2026102100000003); name = Localizable.strings; sourceTree = "<group>"; };
+/* End PBXVariantGroup section */
+
 /* Begin PBXProject section */
 		98F54143AB4E86B28C3AFEE0 /* Project object */ = {isa = PBXProject; attributes = {BuildIndependentTargetsInParallel = 1; LastSwiftUpdateCheck = 1600; LastUpgradeCheck = 1600; TargetAttributes = {0E8A3AD980EC179856012B7E = {CreatedOnToolsVersion = 16.0;};};}; buildConfigurationList = C91DFE8190D6AA5E5650E6C4; compatibilityVersion = "Xcode 15.0"; developmentRegion = de; hasScannedForEncodings = 0; knownRegions = (de, en, Base); mainGroup = 325F10A6957A34D66CB8C0E4; productRefGroup = BFE00B156DCFC34C4751A6E5; projectDirPath = ""; projectRoot = ""; targets = (0E8A3AD980EC179856012B7E); };
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		6AC696A880E335123309EDD3 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (
+				AF16828C2026102100000004 /* Localizable.strings in Resources */,
 				B8AC1D188E57AAA305899A40 /* Assets.xcassets in Resources */,
 				01DAFFEDC37C03B37484F014 /* PrivacyInfo.xcprivacy in Resources */,
 			); runOnlyForDeploymentPostprocessing = 0; };
@@ -85,6 +100,8 @@
 
 /* Begin PBXSourcesBuildPhase section */
 		60C4A7BCE9558CB20D9ADDCB /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (
+				46B94429C977583AA5F68EE6 /* DesignAlternativesView.swift in Sources */,
+				A8479C2CBAF7A9BE9CFF3397 /* VolumeAlternative.swift in Sources */,
 				A192D2BCC2DB25FC4E29213D /* VolumeCalcApp.swift in Sources */,
 				70EE588C003629B12094698A /* ContentView.swift in Sources */,
 				135D11041F51BDE38C72CB98 /* DesignSystem.swift in Sources */,

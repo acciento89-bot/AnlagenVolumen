@@ -24,6 +24,7 @@ jobs:
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v5
+      - run: bash ci/alternative-store-smoke.sh
       - run: xcodebuild -project AnlagenVolumen.xcodeproj -scheme VolumeCalc -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO build
       - run: xcodebuild -project AnlagenVolumen.xcodeproj -scheme VolumeCalc -sdk iphoneos -configuration Release CODE_SIGNING_ALLOWED=NO build
 

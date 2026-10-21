@@ -63,3 +63,36 @@
 "Wasserinhalt je Stück" = "Water volume per item";
 "Projektname" = "Project name";
 "Planungsreserve" = "Planning reserve";
+
+/* Design alternatives */
+"Varianten" = "Alternatives";
+"Variantenvergleich" = "Design comparison";
+"Neue Variante" = "New alternative";
+"Variante anlegen" = "Create alternative";
+"Gespeicherte Varianten" = "Saved alternatives";
+"Noch keine Variante angelegt." = "No alternatives yet.";
+"Plane einen anderen Aufbau, ohne deinen tatsächlichen Bestand oder Füllprüfungen zu verändern." = "Plan a different configuration without changing your actual inventory or fill audits.";
+"Bestand inzwischen geändert" = "Inventory has since changed";
+"Variante löschen?" = "Delete alternative?";
+"Nur diese Planungsvariante wird entfernt. Dein tatsächlicher Bestand und Füllprüfungen bleiben erhalten." = "Only this planning alternative is removed. Your actual inventory and fill audits are retained.";
+"Planungsvariante" = "Planning alternative";
+"Name" = "Name";
+"Bestandsaufnahme" = "Baseline captured";
+"Der aktuelle Bestand wurde nach der Aufnahme geändert. Dieser Vergleich verwendet weiterhin den eingefrorenen Bestand." = "The actual inventory changed after this snapshot. This comparison continues to use the frozen baseline.";
+"Bestand → Variante" = "Baseline → Proposal";
+"Aufbau der Variante" = "Proposed configuration";
+"Vergleich teilen" = "Share comparison";
+"Die Reserve ist ein separater Planungswert. Die Variante ist keine Messung und kein Nachweis eines tatsächlichen Umbaus." = "Reserve is a separate planning allowance. This alternative is not a measurement or proof of an installed change.";
+"Bitte einen Namen sowie endliche, nicht negative Mengen, Volumen und Reserve eingeben." = "Enter a name and finite, nonnegative quantities, volumes and reserve.";
+"Nicht gespeichert. Die bisherigen Projektdaten bleiben erhalten." = "Not saved. Your existing project data is retained.";
+"Variante" = "Alternative";
+"Volumen je Einheit" = "Volume per unit";
+"Quelle / Herstellerangabe" = "Source / manufacturer specification";
+"Prüfe bei geänderten Bauteilen auch die Quelle. Berechnete Werte aus dem Bestand werden nicht automatisch neu dimensioniert." = "Verify the source when changing components. Calculated inventory values are not automatically resized.";
+"Bauteil der Variante" = "Proposed component";
+"Übernehmen" = "Apply";
+"Planungsvolumen" = "Planning volume";
+"Menge" = "Quantity";
+"Entfernen" = "Remove";
+"Projekte" = "Projects";
+"Notiz" = "Note";
