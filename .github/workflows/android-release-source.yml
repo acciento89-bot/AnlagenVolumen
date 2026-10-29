@@ -1,0 +1,50 @@
+name: VolumeCalc Android release source (manual, no Play upload)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: volumecalc-android-release-source
+  cancel-in-progress: false
+
+jobs:
+  android:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - name: Verify exact Android source and immutable artifact contract without network
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python3 -m unittest discover -s .github/release-source-tests -v
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "9.5.0"
+      - name: Verify VolumeCalc launcher, splash and Play icon parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/generate_android_icons.cjs --verify
+          grep -Fq 'android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher' android/app/src/main/res/values-v31/styles.xml
+          grep -Fq 'android:icon="@drawable/ic_launcher"' android/app/src/main/AndroidManifest.xml
+          ! grep -Fq 'android:roundIcon=' android/app/src/main/AndroidManifest.xml
+          test -z "$(find android/app/src/main/res -type f \( -path '*/mipmap-anydpi*' -o -iname '*adaptive*' -o -iname '*foreground*' -o -iname '*background*' \) -print -quit)"
+          grep -Fq 'versionCode = 6' android/app/build.gradle.kts
+          grep -Fq 'versionName = "1.2.0"' android/app/build.gradle.kts
+      - run: gradle -p android testDebugUnitTest
+      - run: gradle -p android bundleRelease
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VolumeCalc-1.2.0-6-unsigned-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+          retention-days: 14
+
