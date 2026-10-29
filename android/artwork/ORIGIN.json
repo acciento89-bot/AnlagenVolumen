@@ -1,0 +1,12 @@
+{
+  "application": "VolumeCalc",
+  "createdDate": "2026-10-29",
+  "authoringMethod": "Codex directly authored independent geometric SVG coordinates in the authorized portfolio task. No imagegen, stock asset, SF/Material symbol, old icon tracing or third-party artwork input.",
+  "master": "android/artwork/launcher.svg",
+  "masterSha256": "adb4dd3baebea227202c7fb9905598b9b41edcbb2a417b8d4903fd10e88943cd",
+  "proposalSha256": "ef37409658f1eb62ee47e848e29cec0b18f7319276bfba527732adbf6449fc7b",
+  "googlePlayDirectory": "android/store/google-play",
+  "platformScope": "Android only; iOS assets are preserved and are not generation inputs.",
+  "review": "Rendered and visually reviewed at512/64/48/32px in the task; actual rebuilt Android launcher review remains pending.",
+  "rightsStatement": "This documents the creation method and inputs; no CC0, third-party license, exclusivity or trademark clearance is claimed."
+}

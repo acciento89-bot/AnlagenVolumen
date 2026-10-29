@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<title>VolumeCalc original geometric Android icon</title>
+<metadata>Original code-authored artwork created for this authorized task on 2026-10-29. No external images, glyphs, fonts, reference artwork or icon-library paths imported. Android master source; no iOS asset input.</metadata>
+<rect width="1024" height="1024" fill="#F4F0E5"/>
+<rect x="168" y="146" width="690" height="734" rx="24" fill="#FFFDF5"/>
+<rect x="168" y="146" width="72" height="734" rx="12" fill="#1F614F"/>
+<line x1="300" y1="294" x2="788" y2="294" stroke="#1F614F" stroke-width="28"/>
+<rect x="304" y="366" width="150" height="320" rx="64" fill="#1F614F"/>
+<rect x="360" y="324" width="38" height="46" fill="#1F614F"/>
+<rect x="330" y="512" width="98" height="112" fill="#FFFDF5"/>
+<line x1="330" y1="512" x2="428" y2="512" stroke="#B7C6BB" stroke-width="14"/>
+<rect x="516" y="380" width="44" height="44" fill="none" stroke="#1F614F" stroke-width="12"/>
+<line x1="598" y1="402" x2="784" y2="402" stroke="#616B63" stroke-width="18"/>
+<rect x="516" y="500" width="44" height="44" fill="none" stroke="#1F614F" stroke-width="12"/>
+<line x1="598" y1="522" x2="784" y2="522" stroke="#616B63" stroke-width="18"/>
+<rect x="516" y="620" width="44" height="44" fill="none" stroke="#1F614F" stroke-width="12"/>
+<line x1="598" y1="642" x2="784" y2="642" stroke="#616B63" stroke-width="18"/>
+<line x1="300" y1="762" x2="788" y2="762" stroke="#B7C6BB" stroke-width="16"/>
+</svg>
