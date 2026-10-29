@@ -2,6 +2,7 @@ package de.kamilunavo.volumecalc
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -9,6 +10,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun AddItemDialog(onDismiss: () -> Unit, onAdd: (UiItem) -> Unit) {
     var mode by remember { mutableIntStateOf(0) }
@@ -68,14 +70,22 @@ internal fun AddItemDialog(onDismiss: () -> Unit, onAdd: (UiItem) -> Unit) {
 
     AlertDialog(
         onDismissRequest = onDismiss,
+        containerColor = Panel,
+        titleContentColor = Ink,
+        textContentColor = Ink,
+        shape = RoundedCornerShape(12.dp),
         title = { Text("Bauteil hinzufügen") },
         text = {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 item {
-                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        FilterChip(selected = mode == 0, onClick = { mode = 0 }, label = { Text("Rohr / Fläche") })
-                        FilterChip(selected = mode == 1, onClick = { mode = 1 }, label = { Text("Heizkörper") })
-                        FilterChip(selected = mode == 2, onClick = { mode = 2 }, label = { Text("Komponente") })
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        FilterChip(selected = mode == 0, onClick = { mode = 0 }, label = { Text("Rohr / Fläche") }, modifier = Modifier.heightIn(min = 48.dp), shape = RoundedCornerShape(4.dp))
+                        FilterChip(selected = mode == 1, onClick = { mode = 1 }, label = { Text("Heizkörper") }, modifier = Modifier.heightIn(min = 48.dp), shape = RoundedCornerShape(4.dp))
+                        FilterChip(selected = mode == 2, onClick = { mode = 2 }, label = { Text("Komponente") }, modifier = Modifier.heightIn(min = 48.dp), shape = RoundedCornerShape(4.dp))
                     }
                 }
 
@@ -126,15 +136,15 @@ internal fun AddItemDialog(onDismiss: () -> Unit, onAdd: (UiItem) -> Unit) {
 
                     1 -> {
                         item {
-                            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                                    FilterChip(selected = radiatorMode == 0, onClick = { radiatorMode = 0 }, label = { Text("Platte") })
-                                    FilterChip(selected = radiatorMode == 1, onClick = { radiatorMode = 1; sectionIndex = 0 }, label = { Text("Stahl-Glied") })
-                                }
-                                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                                    FilterChip(selected = radiatorMode == 2, onClick = { radiatorMode = 2; sectionIndex = 0 }, label = { Text("Guss-Glied") })
-                                    FilterChip(selected = radiatorMode == 3, onClick = { radiatorMode = 3 }, label = { Text("Manuell") })
-                                }
+                            FlowRow(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(6.dp),
+                            ) {
+                                FilterChip(selected = radiatorMode == 0, onClick = { radiatorMode = 0 }, label = { Text("Platte") }, modifier = Modifier.heightIn(min = 48.dp), shape = RoundedCornerShape(4.dp))
+                                FilterChip(selected = radiatorMode == 1, onClick = { radiatorMode = 1; sectionIndex = 0 }, label = { Text("Stahl-Glied") }, modifier = Modifier.heightIn(min = 48.dp), shape = RoundedCornerShape(4.dp))
+                                FilterChip(selected = radiatorMode == 2, onClick = { radiatorMode = 2; sectionIndex = 0 }, label = { Text("Guss-Glied") }, modifier = Modifier.heightIn(min = 48.dp), shape = RoundedCornerShape(4.dp))
+                                FilterChip(selected = radiatorMode == 3, onClick = { radiatorMode = 3 }, label = { Text("Manuell") }, modifier = Modifier.heightIn(min = 48.dp), shape = RoundedCornerShape(4.dp))
                             }
                         }
 
