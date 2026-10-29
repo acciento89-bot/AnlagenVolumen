@@ -92,6 +92,7 @@ internal fun VolumeCalcApp(
     }
 
     MaterialTheme(
+        typography = productTypography(),
         colorScheme = lightColorScheme(
             primary = Accent,
             secondary = Accent2,
@@ -295,7 +296,7 @@ private fun AppBar(onProjects: () -> Unit, onAdd: () -> Unit) {
         TextButton(onClick = onProjects) { Text("▰", color = Accent, fontSize = 22.sp) }
         Text("VolumeCalc", modifier = Modifier.weight(1f), textAlign = TextAlign.Center, color = Ink, fontSize = 20.sp, fontWeight = FontWeight.Bold)
         Surface(
-            modifier = Modifier.size(38.dp).clickable(onClick = onAdd),
+            modifier = Modifier.size(48.dp).clickable(onClick = onAdd),
             color = Accent,
             shape = RoundedCornerShape(9.dp),
         ) { Box(contentAlignment = Alignment.Center) { Text("+", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold) } }
@@ -304,23 +305,12 @@ private fun AppBar(onProjects: () -> Unit, onAdd: () -> Unit) {
 
 @Composable
 private fun InventoryHero(project: UiProject) {
-    LedgerCard {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                Modifier.size(60.dp).background(Accent.copy(alpha = .10f), RoundedCornerShape(14.dp)),
-                contentAlignment = Alignment.Center,
-            ) { Text("▣\n●", color = Accent, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold) }
-            Spacer(Modifier.width(14.dp))
-            Column(Modifier.weight(1f)) {
-                Text("ANLAGENINVENTAR", color = Accent, fontSize = 12.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.5.sp)
-                Text(project.name, color = Ink, fontSize = 28.sp, fontWeight = FontWeight.Bold)
-                Text("Wasserinhalt Bauteil für Bauteil erfassen", color = Muted, fontSize = 13.sp)
-            }
-        }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Tag("${project.items.size} Bauteile")
-            Tag("+${format(project.reservePercent, 1)} % Reserve")
-        }
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text("VOLUMENBUCH / ANLAGENINVENTAR", color = Accent, style = MaterialTheme.typography.labelLarge)
+        Text(project.name, color = Ink, style = MaterialTheme.typography.headlineMedium)
+        Text("Wasserinhalt Bauteil für Bauteil erfassen", color = Muted, style = MaterialTheme.typography.bodyMedium)
+        HorizontalDivider(color = Accent, thickness = 2.dp)
+        Text("${project.items.size} Bauteile  ·  +${format(project.reservePercent, 1)} % Reserve", color = Muted, style = MaterialTheme.typography.bodyMedium)
     }
 }
 
